@@ -11,57 +11,40 @@ using Gameplay;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using Gameplay.Rooms;
+using Gameplay.Rooms.Data;
+using Gameplay.Values;
 
 namespace Clawrchipelago.HarmonyPatches
 {
-    [HarmonyPatch(typeof(StatisticData))]
-    [HarmonyPatch(nameof(StatisticData.SetStat))]
-    public class FinishedFloorPatch
+    public class FinishedFloorUtilities
     {
-        private static ILogger _logger;
-        private static DungeonClawlerArchipelagoClient _archipelago;
-        private static LocationChecker _locationChecker;
+        private ILogger _logger;
+        private DungeonClawlerArchipelagoClient _archipelago;
+        private LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
+        public FinishedFloorUtilities(ILogger logger, DungeonClawlerArchipelagoClient archipelago,
+            LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
             _locationChecker = locationChecker;
         }
 
-        // public void SetStat(EStatisticType type, double value)
-        public static void Postfix(StatisticData __instance, EStatisticType type, double value)
+        public void FinishedFloor(int floor)
         {
-            try
+            var difficulty = Game.Instance.GetCurrentDifficulty();
+            _locationChecker.AddCheckedLocation($"Complete Floor {floor} - {difficulty}");
+
+            if (floor >= 20)
             {
-                _logger.LogDebugPatchIsRunning(nameof(StatisticData), nameof(StatisticData.SetStat), nameof(FinishedFloorPatch), nameof(Postfix));
-
-                if (type != EStatisticType.FloorReached)
-                {
-                    return;
-                }
-
-                var floor = Game.Instance.Data.MapData.Floor;
-                var difficulty = Game.Instance.GetCurrentDifficulty();
-                _locationChecker.AddCheckedLocation($"Complete Floor {floor} - {difficulty}");
-
-                if (floor >= 20)
-                {
-                    var fighterName = Game.Instance.Data.Fighter.Setting.Name.ToEnglish();
-                    _locationChecker.AddCheckedLocation($"Win a game with {fighterName}");
-                    CheckGoalsAfterWin(Game.Instance.Data.DifficultyLevel, floor, fighterName);
-                }
-
-                return;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogErrorException(nameof(FinishedFloorPatch), nameof(Postfix), ex);
-                return;
+                var fighterName = Game.Instance.Data.Fighter.Setting.Name.ToEnglish();
+                _locationChecker.AddCheckedLocation($"Win a game with {fighterName}");
+                CheckGoalsAfterWin(Game.Instance.Data.DifficultyLevel, floor, fighterName);
             }
         }
 
-        private static void CheckGoalsAfterWin(EDifficultyLevel difficulty, int floor, string fighter)
+        private void CheckGoalsAfterWin(EDifficultyLevel difficulty, int floor, string fighter)
         {
             switch (_archipelago.SlotData.Goal)
             {
@@ -70,24 +53,28 @@ namespace Clawrchipelago.HarmonyPatches
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatHard:
                     if (difficulty >= EDifficultyLevel.Hard)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatVery_hard:
                     if (difficulty >= EDifficultyLevel.VeryHard)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatNightmare:
                     if (difficulty >= EDifficultyLevel.Nightmare)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatNormalWithAllCharacters:
                     RegisterFighterVictoryInDatastorage(difficulty, EDifficultyLevel.Normal, fighter);
@@ -106,43 +93,50 @@ namespace Clawrchipelago.HarmonyPatches
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatFloor30:
                     if (floor >= 30)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatFloor35:
                     if (floor >= 35)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatFloor40:
                     if (floor >= 40)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatFloor45:
                     if (floor >= 45)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 case Goal.BeatFloor50:
                     if (floor >= 50)
                     {
                         _archipelago.ReportGoalCompletion();
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static void RegisterFighterVictoryInDatastorage(EDifficultyLevel difficulty, EDifficultyLevel minimumDifficulty, string fighter)
+        private void RegisterFighterVictoryInDatastorage(EDifficultyLevel difficulty,
+            EDifficultyLevel minimumDifficulty, string fighter)
         {
             var session = _archipelago.GetSession();
             const string key = "FighterVictories";
@@ -158,6 +152,98 @@ namespace Clawrchipelago.HarmonyPatches
             if (victories.Count(x => x.Value) >= 13)
             {
                 _archipelago.ReportGoalCompletion();
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(StatisticData))]
+    [HarmonyPatch(nameof(StatisticData.SetStat))]
+    public class SetStatFloorReachedPatch
+    {
+        private static ILogger _logger;
+        private static DungeonClawlerArchipelagoClient _archipelago;
+        private static LocationChecker _locationChecker;
+        private static FinishedFloorUtilities _finishedFloorUtilities;
+
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago,
+            LocationChecker locationChecker)
+        {
+            _logger = logger;
+            _archipelago = archipelago;
+            _locationChecker = locationChecker;
+            _finishedFloorUtilities = new FinishedFloorUtilities(logger, archipelago, locationChecker);
+        }
+
+        // public void SetStat(EStatisticType type, double value)
+        public static void Postfix(StatisticData __instance, EStatisticType type, double value)
+        {
+            try
+            {
+                //_logger.LogDebugPatchIsRunning(nameof(StatisticData), nameof(StatisticData.SetStat),
+                //    nameof(SetStatFloorReachedPatch), nameof(Postfix));
+
+                //var floor = Game.Instance.Data.MapData.Floor - 1;
+
+                //if (type != EStatisticType.FloorReached || floor <= 0)
+                //{
+                //    return;
+                //}
+
+                //_logger.LogInfo($"Detected reached floor {floor+1}");
+                //_finishedFloorUtilities.FinishedFloor(floor);
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogErrorException(nameof(SetStatFloorReachedPatch), nameof(Postfix), ex);
+                return;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Map))]
+    [HarmonyPatch("EnterRoom")]
+    public class MapEnterRoomPatch
+    {
+        private static ILogger _logger;
+        private static DungeonClawlerArchipelagoClient _archipelago;
+        private static LocationChecker _locationChecker;
+        private static FinishedFloorUtilities _finishedFloorUtilities;
+
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago,
+            LocationChecker locationChecker)
+        {
+            _logger = logger;
+            _archipelago = archipelago;
+            _locationChecker = locationChecker;
+            _finishedFloorUtilities = new FinishedFloorUtilities(logger, archipelago, locationChecker);
+        }
+
+        // private void EnterRoom(MapTileData tile)
+        public static void Postfix(Map __instance, MapTileData tile)
+        {
+            try
+            {
+                _logger.LogDebugPatchIsRunning(nameof(Map), "EnterRoom",
+                    nameof(MapEnterRoomPatch), nameof(Postfix));
+
+                var floor = Game.Instance.Data.MapData.Floor;
+
+                if (!__instance.FloorChange())
+                {
+                    return;
+                }
+
+                _logger.LogInfo($"Detected Finished floor {floor}");
+                _finishedFloorUtilities.FinishedFloor(floor);
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogErrorException(nameof(MapEnterRoomPatch), nameof(Postfix), ex);
+                return;
             }
         }
     }

@@ -39,9 +39,13 @@ namespace Clawrchipelago.HarmonyPatches
                 _logger.LogDebugPatchIsRunning(nameof(Game), nameof(Game.AddNewPerk), nameof(AddNewPerkPatch), nameof(Prefix));
 
                 var perkName = perk.Setting.Name.ToEnglish();
+                _logger.LogDebug("perkName: ", perkName);
                 var missingLocations = _locationChecker.GetAllMissingLocationNames();
+                _logger.LogDebug("missingLocations: ", missingLocations.ToArray<object>());
                 var missingLocationsMatchingThisPerk = missingLocations.Where(x => x.StartsWith($"{perkName} - Level"));
-                var firstMissingLocation = missingLocationsMatchingThisPerk.OrderBy(x => int.Parse(x.Split(" ")[0])).FirstOrDefault();
+                _logger.LogDebug("missingLocationsMatchingThisPerk: ", missingLocationsMatchingThisPerk.ToArray<object>());
+                var firstMissingLocation = missingLocationsMatchingThisPerk.OrderBy(x => int.Parse(x.Split(" ").Last())).FirstOrDefault();
+                _logger.LogDebug("firstMissingLocation: ", firstMissingLocation);
                 if (string.IsNullOrWhiteSpace(firstMissingLocation))
                 {
                     return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;

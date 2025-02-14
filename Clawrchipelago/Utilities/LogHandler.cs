@@ -1,10 +1,9 @@
 ﻿using BepInEx.Logging;
 using UnityEngine;
-using Logger = KaitoKid.ArchipelagoUtilities.Net.Client.Logger;
 
 namespace Clawrchipelago.Utilities
 {
-    public class LogHandler : Logger
+    public class LogHandler : KaitoKid.ArchipelagoUtilities.Net.Client.Logger
     {
         private readonly ManualLogSource _logger;
 

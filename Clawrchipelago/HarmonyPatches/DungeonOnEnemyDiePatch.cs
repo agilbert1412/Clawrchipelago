@@ -1,17 +1,19 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections;
 using Clawrchipelago.Extensions;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using Gameplay;
 using Gameplay.Combatants;
+using Gameplay.Enemies;
 
 namespace Clawrchipelago.HarmonyPatches
 {
-    [HarmonyPatch(typeof(Combatant))]
-    [HarmonyPatch(nameof(Combatant.GetAttacked))]
-    public class CombatantGetAttackedPatch
+    [HarmonyPatch(typeof(Dungeon))]
+    [HarmonyPatch(nameof(Dungeon.OnEnemyDied))]
+    public class DungeonOnEnemyDiePatch
     {
         private static ILogger _logger;
         private static ArchipelagoClient _archipelago;
@@ -24,25 +26,23 @@ namespace Clawrchipelago.HarmonyPatches
             _locationChecker = locationChecker;
         }
 
-        // public IEnumerator GetAttacked(Combatant attacker, double amount, bool ignoreArmor, bool triggerAttackEffects, bool isCrit, System.Random rng)
-        public static void Postfix(Combatant __instance, Combatant attacker, double amount, bool ignoreArmor, bool triggerAttackEffects, bool isCrit, Random rng)
+        // public void OnEnemyDied(Enemy enemy)
+        public static void Postfix(Dungeon __instance, Enemy enemy)
         {
             try
             {
-                _logger.LogDebugPatchIsRunning(nameof(Combatant), nameof(Combatant.GetAttacked), nameof(CombatantGetAttackedPatch), nameof(Postfix));
+                _logger.LogDebugPatchIsRunning(nameof(Dungeon), nameof(Dungeon.OnEnemyDied), nameof(DungeonOnEnemyDiePatch), nameof(Postfix));
 
-                if (!__instance.IsDead())
-                {
-                    return;
-                }
+                var data = enemy.GetEnemyData();
 
-                var data = __instance.GetEnemyData();
                 if (data == null)
                 {
+                    _logger.LogDebug($"{nameof(DungeonOnEnemyDiePatch)}: Could not get Enemy Data");
                     return;
                 }
 
                 var enemyName = data.Setting.Name.ToEnglish();
+                _logger.LogDebug($"{nameof(DungeonOnEnemyDiePatch)}: {enemyName} is dead!");
                 var difficulty = Game.Instance.GetCurrentDifficulty();
                 _locationChecker.AddCheckedLocation($"Kill {enemyName} - {difficulty}");
 
@@ -50,7 +50,7 @@ namespace Clawrchipelago.HarmonyPatches
             }
             catch (Exception ex)
             {
-                _logger.LogErrorException(nameof(CombatantGetAttackedPatch), nameof(Postfix), ex);
+                _logger.LogErrorException(nameof(DungeonOnEnemyDiePatch), nameof(Postfix), ex);
                 return;
             }
         }

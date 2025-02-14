@@ -25,9 +25,8 @@ namespace Clawrchipelago.HarmonyPatches.DebugPatches
         {
             try
             {
-                _logger.LogDebugPatchIsRunning(nameof(PlayerController), "HandleInput", nameof(HandleInputPatch), nameof(Prefix));
+                // _logger.LogDebugPatchIsRunning(nameof(PlayerController), "HandleInput", nameof(HandleInputPatch), nameof(Prefix));
                 
-
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     _logger.LogInfo($"Exporting All Data...");

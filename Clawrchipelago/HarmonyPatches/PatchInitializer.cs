@@ -15,8 +15,9 @@ namespace Clawrchipelago.HarmonyPatches
         public void InitializeAllPatches(ILogger logger, Harmony harmony, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             InitializeDebugPatches(logger);
-            FinishedFloorPatch.Initialize(logger, archipelago, locationChecker);
-            CombatantGetAttackedPatch.Initialize(logger, archipelago, locationChecker);
+            SetStatFloorReachedPatch.Initialize(logger, archipelago, locationChecker);
+            MapEnterRoomPatch.Initialize(logger, archipelago, locationChecker);
+            DungeonOnEnemyDiePatch.Initialize(logger, archipelago, locationChecker);
             GetRandomPerkRewardPatch.Initialize(logger, archipelago, locationChecker);
             AddNewPerkPatch.Initialize(logger, archipelago, locationChecker);
         }
