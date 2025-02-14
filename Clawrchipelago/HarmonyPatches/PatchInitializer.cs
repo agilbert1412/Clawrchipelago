@@ -20,6 +20,14 @@ namespace Clawrchipelago.HarmonyPatches
             DungeonOnEnemyDiePatch.Initialize(logger, archipelago, locationChecker);
             GetRandomPerkRewardPatch.Initialize(logger, archipelago, locationChecker);
             AddNewPerkPatch.Initialize(logger, archipelago, locationChecker);
+
+            GenerateStartDeckPatch.Initialize(logger, archipelago, locationChecker);
+            ItemUnlockPatch.Initialize(logger, archipelago, locationChecker);
+            GetRandomCombatItemRewardPatch.Initialize(logger, archipelago, locationChecker);
+
+            PreventSaveProgressPatch.Initialize(logger, archipelago, locationChecker);
+            SelectSaveSlotPatch.Initialize(logger, archipelago, locationChecker);
+            DisableAchievementsPatch.Initialize(logger, archipelago, locationChecker);
         }
 
         private static void InitializeDebugPatches(ILogger logger)

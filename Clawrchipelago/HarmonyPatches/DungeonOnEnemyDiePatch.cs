@@ -1,12 +1,10 @@
 ﻿using HarmonyLib;
 using System;
-using System.Collections;
 using Clawrchipelago.Extensions;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using Gameplay;
-using Gameplay.Combatants;
 using Gameplay.Enemies;
 
 namespace Clawrchipelago.HarmonyPatches

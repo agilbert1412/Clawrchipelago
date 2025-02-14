@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Platforms;
 using System.IO;
 using System.Linq;
+using Clawrchipelago.Extensions;
 using Gameplay.Enemies.Settings;
 using Gameplay.Items.Settings;
 
@@ -13,9 +14,29 @@ namespace Clawrchipelago.DataExport
     {
         public void ExportAll()
         {
+            ExportFighters();
             ExportItems();
             ExportEnemies();
             CustomExport();
+        }
+
+        private void ExportFighters()
+        {
+            var fightersByName = new Dictionary<string, Dictionary<string, object>>();
+            foreach (var fighter in Runtime.Configuration.Fighters)
+            {
+                var name = fighter.Name.ToEnglish();
+                while (fightersByName.ContainsKey(name))
+                {
+                    name = $"{name}_x";
+                }
+
+                fightersByName.Add(name, new Dictionary<string, object>());
+                fightersByName[name].Add("Name", fighter.Name.ToEnglish());
+                fightersByName[name].Add("Description", fighter.Description.ToEnglish());
+            }
+            var itemsAsJson = JsonConvert.SerializeObject(fightersByName, Formatting.Indented);
+            File.WriteAllText("fighters.json", itemsAsJson);
         }
 
         private void ExportItems()
@@ -45,6 +66,10 @@ namespace Clawrchipelago.DataExport
                 itemsByType[type][name].Add("StackLimit", item.StackLimit);
                 itemsByType[type][name].Add("IsStackable", item.IsStackable);
                 itemsByType[type][name].Add("HasStackLimit", item.HasStackLimit);
+                itemsByType[type][name].Add("FighterName", item.Fighter?.Name?.ToEnglish());
+                itemsByType[type][name].Add("CanDrop", item.CanDrop());
+                itemsByType[type][name].Add("CanBeCollected", item.CanBeCollected);
+                itemsByType[type][name].Add("Rarity", item.Rarity.ToString());
             }
             var itemsAsJson = JsonConvert.SerializeObject(itemsByType, Formatting.Indented);
             File.WriteAllText("items.json", itemsAsJson);

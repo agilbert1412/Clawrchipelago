@@ -11,9 +11,11 @@ using Gameplay;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using Gameplay.Items.Data;
 using Gameplay.Rooms;
 using Gameplay.Rooms.Data;
-using Gameplay.Values;
+using Gameplay.Items.Settings;
+using Platforms;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -230,13 +232,14 @@ namespace Clawrchipelago.HarmonyPatches
 
                 var floor = Game.Instance.Data.MapData.Floor;
 
-                if (!__instance.FloorChange())
+                SetPerksDeck();
+
+                if (__instance.FloorChange())
                 {
-                    return;
+                    _logger.LogInfo($"Detected Finished floor {floor}");
+                    _finishedFloorUtilities.FinishedFloor(floor);
                 }
 
-                _logger.LogInfo($"Detected Finished floor {floor}");
-                _finishedFloorUtilities.FinishedFloor(floor);
 
                 return;
             }
@@ -244,6 +247,36 @@ namespace Clawrchipelago.HarmonyPatches
             {
                 _logger.LogErrorException(nameof(MapEnterRoomPatch), nameof(Postfix), ex);
                 return;
+            }
+        }
+
+        private static void SetPerksDeck()
+        {
+            var deck = Game.Instance.Data.Perks;
+            foreach (var item in Runtime.Configuration.Items)
+            {
+                if (item.Type != EPickupItemType.Perk || item.Rarity == EItemRarity.DontDrop)
+                {
+                    continue;
+                }
+
+                var itemName = item.Name.ToEnglish();
+                var receivedCount = _archipelago.GetReceivedItemCount(itemName);
+
+                bool IsThisItem(PickupItemData x) => x.Setting.Name.ToEnglish().Equals(itemName);
+
+                if (receivedCount <= 0)
+                {
+                    deck.RemoveAll(IsThisItem);
+                    continue;
+                }
+
+                if (!deck.Any(IsThisItem))
+                {
+                    deck.Add(item.GenerateData());
+                }
+
+                deck.First(IsThisItem).PerkCount = receivedCount;
             }
         }
     }
