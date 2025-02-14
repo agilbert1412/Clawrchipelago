@@ -38,14 +38,7 @@ namespace Clawrchipelago.HarmonyPatches
 
                 _logger.LogDebugPatchIsRunning(nameof(Game), nameof(Game.AddNewPerk), nameof(AddNewPerkPatch), nameof(Prefix));
 
-                var perkName = perk.Setting.Name.ToEnglish();
-                _logger.LogDebug("perkName: ", perkName);
-                var missingLocations = _locationChecker.GetAllMissingLocationNames();
-                _logger.LogDebug("missingLocations: ", missingLocations.ToArray<object>());
-                var missingLocationsMatchingThisPerk = missingLocations.Where(x => x.StartsWith($"{perkName} - Level"));
-                _logger.LogDebug("missingLocationsMatchingThisPerk: ", missingLocationsMatchingThisPerk.ToArray<object>());
-                var firstMissingLocation = missingLocationsMatchingThisPerk.OrderBy(x => int.Parse(x.Split(" ").Last())).FirstOrDefault();
-                _logger.LogDebug("firstMissingLocation: ", firstMissingLocation);
+                var firstMissingLocation = GetNextPerkLocationName(perk);
                 if (string.IsNullOrWhiteSpace(firstMissingLocation))
                 {
                     return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;
@@ -60,6 +53,15 @@ namespace Clawrchipelago.HarmonyPatches
                 _logger.LogErrorException(nameof(AddNewPerkPatch), nameof(Prefix), ex);
                 return MethodPrefix.RUN_ORIGINAL_METHOD;
             }
+        }
+
+        public static string GetNextPerkLocationName(PickupItemData perk)
+        {
+            var perkName = perk.Setting.Name.ToEnglish();
+            var missingLocations = _locationChecker.GetAllMissingLocationNames();
+            var missingLocationsMatchingThisPerk = missingLocations.Where(x => x.StartsWith($"{perkName} - Level"));
+            var firstMissingLocation = missingLocationsMatchingThisPerk.OrderBy(x => int.Parse(x.Split(" ").Last())).FirstOrDefault();
+            return firstMissingLocation;
         }
     }
 }

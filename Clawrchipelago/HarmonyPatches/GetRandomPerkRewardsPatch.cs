@@ -11,12 +11,13 @@ using Platforms;
 using System.Collections.Generic;
 using System.Linq;
 using Clawrchipelago.Extensions;
+using Utils;
 
 namespace Clawrchipelago.HarmonyPatches
 {
     [HarmonyPatch(typeof(Game))]
     [HarmonyPatch(nameof(Game.GetRandomPerkRewards))]
-    public class GetRandomPerkRewardPatch
+    public class GetRandomPerkRewardsPatch
     {
         private static ILogger _logger;
         private static ArchipelagoClient _archipelago;
@@ -34,7 +35,7 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
-                _logger.LogDebugPatchIsRunning(nameof(Game), nameof(Game.GetRandomPerkRewards), nameof(GetRandomPerkRewardPatch), nameof(Prefix));
+                _logger.LogDebugPatchIsRunning(nameof(Game), nameof(Game.GetRandomPerkRewards), nameof(GetRandomPerkRewardsPatch), nameof(Prefix));
 
                 rnd ??= new Random(__instance.Data.CurrentRoomSeed);
 
@@ -55,7 +56,7 @@ namespace Clawrchipelago.HarmonyPatches
                     return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;
                 }
 
-                var individualChance = Math.Min(1.0, (1.0 / itemsInOrder.Count) * 1.25);
+                var individualChance = Math.Min(1.0, (1.0 / itemsInOrder.Count) * 1.5);
                 for (var i = 0; i < count; i++)
                 {
                     var pickedItem = itemsInOrder.First();
@@ -70,7 +71,8 @@ namespace Clawrchipelago.HarmonyPatches
                         break;
                     }
 
-                    rewards.Add(pickedItem.GenerateData());
+                    var perkData = pickedItem.GenerateData();
+                    rewards.Add(perkData);
                     itemsInOrder.Remove(pickedItem);
 
                     if (!itemsInOrder.Any())
@@ -85,7 +87,7 @@ namespace Clawrchipelago.HarmonyPatches
             }
             catch (Exception ex)
             {
-                _logger.LogErrorException(nameof(GetRandomPerkRewardPatch), nameof(Prefix), ex);
+                _logger.LogErrorException(nameof(GetRandomPerkRewardsPatch), nameof(Prefix), ex);
                 return MethodPrefix.RUN_ORIGINAL_METHOD;
             }
         }

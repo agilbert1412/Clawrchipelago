@@ -60,6 +60,9 @@
 		<Reference Include="Sirenix.Serialization">
 		  <HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Sirenix.Serialization.dll</HintPath>
 		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+		</Reference>
 		<Reference Include="UnityEngine">
 			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\UnityEngine.dll</HintPath>
 		</Reference>
