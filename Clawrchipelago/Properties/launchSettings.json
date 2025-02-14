@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Dungeon Clawler": {
+      "commandName": "Executable",
+      "executablePath": "..\\DungeonClawler Debug\\Windows\\DungeonClawler.exe",
+      "workingDirectory": "..\\..\\DungeonClawler Debug"
+    }
+  }
+}
