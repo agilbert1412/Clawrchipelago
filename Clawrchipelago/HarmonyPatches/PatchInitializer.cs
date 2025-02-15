@@ -30,6 +30,7 @@ namespace Clawrchipelago.HarmonyPatches
             SelectSaveSlotPatch.Initialize(logger, archipelago, locationChecker);
             DisableAchievementsPatch.Initialize(logger, archipelago, locationChecker);
             DifficultyLevelPatch.Initialize(logger, archipelago, locationChecker);
+            SavePatch.Initialize(logger, archipelago, locationChecker);
 
             InitFreshGamePatch.Initialize(logger, archipelago, locationChecker);
             RecycleUIPatches.Initialize(logger, archipelago, locationChecker);

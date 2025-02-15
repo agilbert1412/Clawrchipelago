@@ -13,6 +13,7 @@ using UI;
 using Gameplay.Items.Data;
 using System.Collections.Generic;
 using TMPro;
+using Platforms;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -29,6 +30,7 @@ namespace Clawrchipelago.HarmonyPatches
             RecycleUIUpdatePatch.Initialize(logger, archipelago, locationChecker);
             RecyclerItemClickedPatch.Initialize(logger, archipelago, locationChecker);
             DeckItemClickedPatch.Initialize(logger, archipelago, locationChecker);
+            RecycleButtonClickedPatch.Initialize(logger, archipelago, locationChecker);
         }
 
         public static int GetMaxStartingCombatItems() => 2 + _archipelago.GetReceivedItemCount("Combat Inventory Size");
@@ -368,6 +370,47 @@ namespace Clawrchipelago.HarmonyPatches
             catch (Exception ex)
             {
                 _logger.LogErrorException(nameof(DeckItemClickedPatch), nameof(Prefix), ex);
+                return MethodPrefix.RUN_ORIGINAL_METHOD;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(RecycleUI))]
+    [HarmonyPatch("RecycleButtonClicked")]
+    public class RecycleButtonClickedPatch
+    {
+        private static ILogger _logger;
+        private static ArchipelagoClient _archipelago;
+        private static LocationChecker _locationChecker;
+
+        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        {
+            _logger = logger;
+            _archipelago = archipelago;
+            _locationChecker = locationChecker;
+        }
+
+        // private void RecycleButtonClicked()
+        public static bool Prefix(RecycleUI __instance)
+        {
+            try
+            {
+                if (RecycleUIPatches.IsSpecialShredder() != 1)
+                {
+                    return MethodPrefix.RUN_ORIGINAL_METHOD;
+                }
+
+                _logger.LogDebugPatchIsRunning(nameof(RecycleUI), "RecycleButtonClicked", nameof(RecycleButtonClickedPatch), nameof(Prefix));
+
+                __instance.Recycler.RemoveAllItems();
+                Game.Instance.Data.Perks = Game.Instance.Data.Perks.Where(x => x.Setting.Type == EPickupItemType.LuckyPaw || x.Setting.DontDrop || x.Setting.Rarity == EItemRarity.DontDrop).Union(__instance.Inventory.GetAllItems()).ToList();
+                AudioSystem.PlaySoundEffect(Runtime.Configuration.AudioSettings.ShredderSound);
+
+                return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogErrorException(nameof(RecycleButtonClickedPatch), nameof(Prefix), ex);
                 return MethodPrefix.RUN_ORIGINAL_METHOD;
             }
         }

@@ -159,7 +159,7 @@ namespace Clawrchipelago
                     return;
                 }
 
-                var perksCount = Game.Instance?.Data?.Perks?.Count;
+                var perksCount = Game.Instance?.Data?.Perks.CountRealPerks();
                 bool IsThisItem(PickupItemData x) => x.Setting.Name.ToEnglish().Equals(lastItem.ItemName);
                 var receivedCount = _archipelago.GetReceivedItemCount(lastItem.ItemName);
                 if (deck.Any(IsThisItem))
