@@ -5,8 +5,6 @@ using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using KaitoKid.ArchipelagoUtilities.Net.Constants;
 using Clawrchipelago.Archipelago;
 using Platforms.Achievements;
-using Platforms.Handler;
-using Platforms.Persistency;
 
 namespace Clawrchipelago.HarmonyPatches
 {

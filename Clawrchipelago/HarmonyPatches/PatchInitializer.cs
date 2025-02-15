@@ -15,7 +15,7 @@ namespace Clawrchipelago.HarmonyPatches
         public void InitializeAllPatches(ILogger logger, Harmony harmony, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             InitializeDebugPatches(logger);
-            SetStatFloorReachedPatch.Initialize(logger, archipelago, locationChecker);
+            // SetStatFloorReachedPatch.Initialize(logger, archipelago, locationChecker);
             MapEnterRoomPatch.Initialize(logger, archipelago, locationChecker);
             DungeonOnEnemyDiePatch.Initialize(logger, archipelago, locationChecker);
             GetRandomPerkRewardsPatch.Initialize(logger, archipelago, locationChecker);
@@ -29,6 +29,10 @@ namespace Clawrchipelago.HarmonyPatches
             PreventSaveProgressPatch.Initialize(logger, archipelago, locationChecker);
             SelectSaveSlotPatch.Initialize(logger, archipelago, locationChecker);
             DisableAchievementsPatch.Initialize(logger, archipelago, locationChecker);
+            DifficultyLevelPatch.Initialize(logger, archipelago, locationChecker);
+
+            InitFreshGamePatch.Initialize(logger, archipelago, locationChecker);
+            RecycleUIPatches.Initialize(logger, archipelago, locationChecker);
         }
 
         private static void InitializeDebugPatches(ILogger logger)

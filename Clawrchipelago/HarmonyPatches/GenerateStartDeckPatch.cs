@@ -5,13 +5,11 @@ using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using Gameplay;
-using Gameplay.Enemies;
 using Gameplay.Items.Data;
 using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Items.Settings;
 using Platforms;
-using UI.TabbedPopup;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -37,16 +35,7 @@ namespace Clawrchipelago.HarmonyPatches
             {
                 _logger.LogDebugPatchIsRunning(nameof(StartConfiguration), nameof(StartConfiguration.GenerateDeck), nameof(GenerateStartDeckPatch), nameof(Postfix));
 
-                for (var i = __result.Count - 1; i >= 0; i--)
-                {
-                    var startingItem = __result[i];
-                    var receivedCount = _archipelago.GetReceivedItemCount(startingItem.Setting.Name.ToEnglish());
-                    if (receivedCount <= 0)
-                    {
-                        __result.RemoveAt(i);
-                    }
-                }
-
+                __result.Clear();
 
                 foreach (var item in Runtime.Configuration.Items)
                 {
@@ -63,13 +52,15 @@ namespace Clawrchipelago.HarmonyPatches
                         continue;
                     }
 
-                    if (__result.Any(x => x.Setting.Name.ToEnglish().Equals(itemName)))
+                    for (var index = 0; index < receivedCount; ++index)
                     {
-                        continue;
-                    }
+                        var existing = __result.FirstOrDefault(x => x.Setting.Name.ToEnglish().Equals(itemName) && !x.HasBeenUpgraded);
+                        if (existing != null)
+                        {
+                            existing.HasBeenUpgraded = true;
+                            continue;
+                        }
 
-                    for (int index = 0; index < receivedCount; ++index)
-                    {
                         var data = item.GenerateData();
                         __result.Add(data);
                     }

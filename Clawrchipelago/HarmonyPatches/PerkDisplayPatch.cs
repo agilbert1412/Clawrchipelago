@@ -4,15 +4,12 @@ using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using Gameplay;
-using KaitoKid.ArchipelagoUtilities.Net.Constants;
 using Gameplay.Items.Data;
 using Gameplay.Items.Settings;
-using Platforms;
-using System.Collections.Generic;
 using System.Linq;
 using Clawrchipelago.Extensions;
 using UI;
-using Utils;
+using UI.TabbedPopup;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -38,12 +35,22 @@ namespace Clawrchipelago.HarmonyPatches
             {
                 _logger.LogDebugPatchIsRunning(nameof(BigItemDisplay), nameof(BigItemDisplay.Init), nameof(PerkDisplayPatch), nameof(Postfix));
 
-                if (item.Setting.Type != EPickupItemType.Perk)
+                if (__instance == null || item == null || item.Setting == null || item.Setting.Type != EPickupItemType.Perk)
+                {
+                    return;
+                }
+
+                if (!Game.Instance.PopupWindow.Tabs.Any(x => x.GetContent() is ItemRewardSelectionTab))
                 {
                     return;
                 }
 
                 var firstMissingLocation = AddNewPerkPatch.GetNextPerkLocationName(item);
+                if (string.IsNullOrEmpty(firstMissingLocation))
+                {
+                    return;
+                }
+
                 var scouted = _archipelago.ScoutSingleLocation(firstMissingLocation);
                 __instance.DescriptionLabel.text = $"{scouted.PlayerName}'s {scouted.ItemName}";
                 

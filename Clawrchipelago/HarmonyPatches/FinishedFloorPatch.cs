@@ -4,18 +4,14 @@ using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
-using Gameplay.Statistics;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using Gameplay;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
-using Gameplay.Items.Data;
 using Gameplay.Rooms;
 using Gameplay.Rooms.Data;
-using Gameplay.Items.Settings;
-using Platforms;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -158,52 +154,6 @@ namespace Clawrchipelago.HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(StatisticData))]
-    [HarmonyPatch(nameof(StatisticData.SetStat))]
-    public class SetStatFloorReachedPatch
-    {
-        private static ILogger _logger;
-        private static DungeonClawlerArchipelagoClient _archipelago;
-        private static LocationChecker _locationChecker;
-        private static FinishedFloorUtilities _finishedFloorUtilities;
-
-        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago,
-            LocationChecker locationChecker)
-        {
-            _logger = logger;
-            _archipelago = archipelago;
-            _locationChecker = locationChecker;
-            _finishedFloorUtilities = new FinishedFloorUtilities(logger, archipelago, locationChecker);
-        }
-
-        // public void SetStat(EStatisticType type, double value)
-        public static void Postfix(StatisticData __instance, EStatisticType type, double value)
-        {
-            try
-            {
-                //_logger.LogDebugPatchIsRunning(nameof(StatisticData), nameof(StatisticData.SetStat),
-                //    nameof(SetStatFloorReachedPatch), nameof(Postfix));
-
-                //var floor = Game.Instance.Data.MapData.Floor - 1;
-
-                //if (type != EStatisticType.FloorReached || floor <= 0)
-                //{
-                //    return;
-                //}
-
-                //_logger.LogInfo($"Detected reached floor {floor+1}");
-                //_finishedFloorUtilities.FinishedFloor(floor);
-
-                return;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogErrorException(nameof(SetStatFloorReachedPatch), nameof(Postfix), ex);
-                return;
-            }
-        }
-    }
-
     [HarmonyPatch(typeof(Map))]
     [HarmonyPatch("EnterRoom")]
     public class MapEnterRoomPatch
@@ -232,8 +182,6 @@ namespace Clawrchipelago.HarmonyPatches
 
                 var floor = Game.Instance.Data.MapData.Floor;
 
-                SetPerksDeck();
-
                 if (__instance.FloorChange())
                 {
                     _logger.LogInfo($"Detected Finished floor {floor}");
@@ -247,36 +195,6 @@ namespace Clawrchipelago.HarmonyPatches
             {
                 _logger.LogErrorException(nameof(MapEnterRoomPatch), nameof(Postfix), ex);
                 return;
-            }
-        }
-
-        private static void SetPerksDeck()
-        {
-            var deck = Game.Instance.Data.Perks;
-            foreach (var item in Runtime.Configuration.Items)
-            {
-                if (item.Type != EPickupItemType.Perk || item.Rarity == EItemRarity.DontDrop)
-                {
-                    continue;
-                }
-
-                var itemName = item.Name.ToEnglish();
-                var receivedCount = _archipelago.GetReceivedItemCount(itemName);
-
-                bool IsThisItem(PickupItemData x) => x.Setting.Name.ToEnglish().Equals(itemName);
-
-                if (receivedCount <= 0)
-                {
-                    deck.RemoveAll(IsThisItem);
-                    continue;
-                }
-
-                if (!deck.Any(IsThisItem))
-                {
-                    deck.Add(item.GenerateData());
-                }
-
-                deck.First(IsThisItem).PerkCount = receivedCount;
             }
         }
     }

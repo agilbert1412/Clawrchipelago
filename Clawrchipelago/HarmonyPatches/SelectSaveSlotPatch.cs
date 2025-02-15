@@ -4,7 +4,6 @@ using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using KaitoKid.ArchipelagoUtilities.Net.Constants;
 using Clawrchipelago.Archipelago;
-using Platforms.Persistency;
 using UI;
 using Platforms;
 using System.Collections.Generic;

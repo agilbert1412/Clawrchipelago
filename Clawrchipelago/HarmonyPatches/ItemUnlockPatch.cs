@@ -1,17 +1,12 @@
 ﻿using HarmonyLib;
 using System;
 using System.Reflection;
-using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
-using Gameplay;
-using Gameplay.Enemies;
 using Gameplay.Fighters.Settings;
-using Gameplay.Items.Settings;
 using Platforms;
-using Gameplay.Combatants;
 using KaitoKid.ArchipelagoUtilities.Net.Constants;
 using UI;
 
@@ -48,7 +43,7 @@ namespace Clawrchipelago.HarmonyPatches
                     fighter.IsLocked = !_archipelago.HasReceivedItem(fighter.Name.ToEnglish());
 
                     var locked = fighter.IsLocked ? "locked" : "unlocked";
-                    _logger.LogInfo($"Fighter {fighter.Name.ToEnglish()} is currently {locked}");
+                    // _logger.LogInfo($"Fighter {fighter.Name.ToEnglish()} is currently {locked}");
                 }
 
                 return MethodPrefix.RUN_ORIGINAL_METHOD;
