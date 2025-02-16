@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using Gameplay.Items.Settings;
 using Platforms;
 using Gameplay.Items.Data;
+using TMPro;
 
 namespace Clawrchipelago
 {
@@ -32,6 +33,9 @@ namespace Clawrchipelago
         private DungeonClawlerArchipelagoClient _archipelago;
         private ArchipelagoConnectionInfo APConnectionInfo { get; set; }
         private LocationChecker _locationChecker;
+
+
+        public TextMeshProUGUI RecentItemsLabel;
 
         private void Awake()
         {
@@ -55,6 +59,11 @@ namespace Clawrchipelago
             InitializeAfterConnection();
 
             _logger.LogInfo($"Connected to Archipelago!");
+        }
+
+        public void Update()
+        {
+            UpdateRecentItemsLabel();
         }
 
         private void InitializeBeforeConnection()
@@ -179,6 +188,34 @@ namespace Clawrchipelago
             {
                 _logger.LogErrorException(ex);
             }
+        }
+
+        public void UpdateRecentItemsLabel()
+        {
+            if (RecentItemsLabel == null)
+            {
+                if (Game.Instance?.FloorLabel == null)
+                {
+                    return;
+                }
+
+                InstanciateRecentItemsLabel();
+            }
+
+            Logger.LogInfo($"Game.Instance.FloorLabel.text: {Game.Instance.FloorLabel.text}");
+            Logger.LogInfo($"RecentItemsLabel.text: {RecentItemsLabel.text}");
+            // Game.Instance.FloorLabel.text = "I am floor label";
+            RecentItemsLabel.text = "I am Recent Items Label";
+            Logger.LogInfo($"Game.Instance.FloorLabel.text: {Game.Instance.FloorLabel.text}");
+            Logger.LogInfo($"RecentItemsLabel.text: {RecentItemsLabel.text}");
+        }
+
+        private void InstanciateRecentItemsLabel()
+        {
+            Logger.LogInfo($"Instanciating RecentItemsLabel");
+            RecentItemsLabel = Instantiate(Game.Instance.FloorLabel, Game.Instance.FloorLabel.transform.parent, true);
+
+            // RecentItemsLabel.PixelAdjustPoint(Vector2.down);
         }
     }
 }

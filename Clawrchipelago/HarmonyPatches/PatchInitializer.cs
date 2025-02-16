@@ -24,7 +24,7 @@ namespace Clawrchipelago.HarmonyPatches
 
             GenerateStartDeckPatch.Initialize(logger, archipelago, locationChecker);
             ItemUnlockPatch.Initialize(logger, archipelago, locationChecker);
-            GetRandomCombatItemRewardPatch.Initialize(logger, archipelago, locationChecker);
+            GetCombatItemPatches.Initialize(logger, archipelago, locationChecker);
 
             PreventSaveProgressPatch.Initialize(logger, archipelago, locationChecker);
             SelectSaveSlotPatch.Initialize(logger, archipelago, locationChecker);

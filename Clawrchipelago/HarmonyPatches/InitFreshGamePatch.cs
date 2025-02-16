@@ -44,6 +44,7 @@ namespace Clawrchipelago.HarmonyPatches
                     nameof(Postfix));
 
                 SetPerksDeck();
+                SetStartingMoney(__instance);
 
                 var mapData = __instance.MapData;
                 var map = mapData.Map;
@@ -170,6 +171,14 @@ namespace Clawrchipelago.HarmonyPatches
                 }
 
                 deck.First(IsThisItem).PerkCount = receivedCount;
+            }
+        }
+
+        private static void SetStartingMoney(GameData gameData)
+        {
+            foreach (var currency in gameData.Currencies.Keys.ToArray())
+            {
+                gameData.Currencies[currency] = _archipelago.GetReceivedItemCount("Starting Money") * 10;
             }
         }
     }

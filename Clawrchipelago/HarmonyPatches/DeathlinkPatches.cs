@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using KaitoKid.ArchipelagoUtilities.Net;
-using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using Gameplay;
 using KaitoKid.ArchipelagoUtilities.Net.Constants;
 using Gameplay.Items.Data;
@@ -10,6 +9,8 @@ using System.Linq;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using Gameplay.Combatants;
+using UnityEngine;
+using ILogger = KaitoKid.ArchipelagoUtilities.Net.Interfaces.ILogger;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -24,7 +25,7 @@ namespace Clawrchipelago.HarmonyPatches
             _logger = logger;
             _archipelago = archipelago;
             _locationChecker = locationChecker;
-            DespawnClawPatch.Initialize(logger, archipelago, locationChecker);
+            EndTurnPatch.Initialize(logger, archipelago, locationChecker);
             HasFinishedRoomPatch.Initialize(logger, archipelago, locationChecker);
         }
 
@@ -37,7 +38,7 @@ namespace Clawrchipelago.HarmonyPatches
 
             if (_archipelago.SlotData.DungeonClawlerDeathLink == DeathLinkOptions.Claw)
             {
-                DespawnClawPatch.DespawnCurrentClaw();
+                EndTurnPatch.CancelTurn();
                 return;
             }
 
@@ -51,8 +52,8 @@ namespace Clawrchipelago.HarmonyPatches
     }
 
     [HarmonyPatch(typeof(ClawMachine))]
-    [HarmonyPatch(nameof(ClawMachine.DespawnClaw))]
-    public class DespawnClawPatch
+    [HarmonyPatch(nameof(ClawMachine.EndTurn))]
+    public class EndTurnPatch
     {
         private static ILogger _logger;
         private static DungeonClawlerArchipelagoClient _archipelago;
@@ -65,7 +66,7 @@ namespace Clawrchipelago.HarmonyPatches
             _locationChecker = locationChecker;
         }
 
-        // public IEnumerator DespawnClaw()
+        // public IEnumerator EndTurn()
         public static void Postfix(ClawMachine __instance, ref IEnumerator __result)
         {
             try
@@ -75,9 +76,16 @@ namespace Clawrchipelago.HarmonyPatches
                     return;
                 }
 
-                _logger.LogDebugPatchIsRunning(nameof(ClawMachine), nameof(ClawMachine.DespawnClaw), nameof(DespawnClawPatch), nameof(Postfix));
+                _logger.LogDebugPatchIsRunning(nameof(ClawMachine), nameof(ClawMachine.EndTurn), nameof(EndTurnPatch), nameof(Postfix));
 
-                if (__instance.NumberOfItemsThisTurn() <= 0 && __instance.CollectedFluffThisTurn() <= 0 && __instance.CurrentItems.Any())
+                if (__instance.HasCancelled())
+                {
+                    return;
+                }
+
+                var gotNothingInCombat = __instance.NumberOfItemsThisTurn() <= 0 && __instance.CollectedFluffThisTurn() <= 0;
+                var gotNothingInDungeon = Game.Instance.Dungeon == null || Game.Instance.Dungeon.RewardItems == null || !Game.Instance.Dungeon.RewardItems.Any();
+                if (gotNothingInCombat && gotNothingInDungeon)
                 {
                     _archipelago.SendDeathLink($"Wasted a perfectly good claw");
                 }
@@ -86,20 +94,45 @@ namespace Clawrchipelago.HarmonyPatches
             }
             catch (Exception ex)
             {
-                _logger.LogErrorException(nameof(DespawnClawPatch), nameof(Postfix), ex);
+                _logger.LogErrorException(nameof(EndTurnPatch), nameof(Postfix), ex);
                 return;
             }
         }
 
-        public static void DespawnCurrentClaw()
+        public static void CancelTurn()
         {
             var clawMachine = Game.Instance?.ClawMachine;
-            if (clawMachine == null || clawMachine.CurrentClaw == null)
+            if (clawMachine == null || clawMachine.CurrentClaw == null || clawMachine.CurrentClaw.gameObject == null)
             {
                 return;
             }
 
-            clawMachine.CurrentClaw.Despawn();
+            clawMachine.SetHasCancelled(true);
+            clawMachine.CancelTurn();
+
+            //while ((object)game.ClawMachine.CollectItems())
+            //if (!game.EarlyExitIfFightOver())
+            //{
+            //    game.ClawMachine.IncreaseRoundCount();
+            //    game.StartCoroutine(game.ClawMachine.DespawnClaw());
+            //    if (game.ClawMachine.IsTurnOver())
+            //        break;
+            //}
+            //else
+            //    break;
+
+            //UnityEngine.Object.Destroy(clawMachine.CurrentClaw.gameObject);
+            //clawMachine.IncreaseRoundCount();
+            //Game.Instance.StartCoroutine(clawMachine.GetNextClaw());
+            //if (clawMachine.IsTurnOver())
+            //{
+            //    clawMachine.CancelTurn();
+            //}
+            //else
+            //{
+            //    clawMachine._playerActionFinished = false;
+            //    clawMachine._playerInputAllowed = true;
+            //}
         }
     }
 
@@ -130,7 +163,7 @@ namespace Clawrchipelago.HarmonyPatches
                     return;
                 }
 
-                _logger.LogDebugPatchIsRunning(nameof(Dungeon), nameof(Dungeon.HasFinishedRoom), nameof(HasFinishedRoomPatch), nameof(Postfix));
+                // _logger.LogDebugPatchIsRunning(nameof(Dungeon), nameof(Dungeon.HasFinishedRoom), nameof(HasFinishedRoomPatch), nameof(Postfix));
 
                 if (IgnoreNextDeath)
                 {

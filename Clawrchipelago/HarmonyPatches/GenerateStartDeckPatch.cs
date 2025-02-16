@@ -55,7 +55,7 @@ namespace Clawrchipelago.HarmonyPatches
                     for (var index = 0; index < receivedCount; ++index)
                     {
                         var existing = __result.FirstOrDefault(x => x.Setting.Name.ToEnglish().Equals(itemName) && !x.HasBeenUpgraded);
-                        if (existing != null)
+                        if (existing != null && existing.CanBeUpgraded())
                         {
                             existing.HasBeenUpgraded = true;
                             continue;

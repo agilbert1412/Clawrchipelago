@@ -187,7 +187,13 @@ namespace Clawrchipelago.HarmonyPatches
                     _logger.LogInfo($"Detected Finished floor {floor}");
                     _finishedFloorUtilities.FinishedFloor(floor);
                 }
-
+                else
+                {
+                    for (var i = 1; i < floor; i++)
+                    {
+                        _finishedFloorUtilities.FinishedFloor(i);
+                    }
+                }
 
                 return;
             }

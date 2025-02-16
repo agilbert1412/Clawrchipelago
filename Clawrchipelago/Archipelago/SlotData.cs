@@ -7,8 +7,8 @@ namespace Clawrchipelago.Archipelago
     public class SlotData : ISlotData
     {
         private const string GOAL_KEY = "goal";
-        private const string SHUFFLE_CHARACTERS_KEY = "shuffle_characters";
-        private const string SHUFFLE_ITEMS_KEY = "shuffle_items";
+        private const string SHUFFLE_FIGHTERS_KEY = "shuffle_fighters";
+        private const string SHUFFLE_ITEMS_KEY = "shuffle_combat_items";
         private const string SHUFFLE_PERKS_KEY = "shuffle_perks";
         private const string ENEMYSANITY_KEY = "enemysanity";
         private const string DEATH_LINK_KEY = "death_link";
@@ -20,7 +20,7 @@ namespace Clawrchipelago.Archipelago
 
         public string SlotName { get; private set; }
         public Goal Goal { get; private set; }
-        public bool ShuffleCharacters { get; private set; }
+        public ShuffleFighters ShuffleFighters { get; private set; }
         public bool ShuffleItems { get; private set; }
         public bool ShufflePerks { get; private set; }
         public bool Enemysanity { get; private set; }
@@ -36,7 +36,7 @@ namespace Clawrchipelago.Archipelago
             _logger = logger;
 
             Goal = GetSlotSetting(GOAL_KEY, Goal.BeatNightmare);
-            ShuffleCharacters = GetSlotSetting(SHUFFLE_CHARACTERS_KEY, true);
+            ShuffleFighters = GetSlotSetting(SHUFFLE_FIGHTERS_KEY, ShuffleFighters.FightersAndPaws);
             ShuffleItems = GetSlotSetting(SHUFFLE_ITEMS_KEY, true);
             ShufflePerks = GetSlotSetting(SHUFFLE_PERKS_KEY, true);
             Enemysanity = GetSlotSetting(ENEMYSANITY_KEY, true);
@@ -120,6 +120,13 @@ namespace Clawrchipelago.Archipelago
         BeatFloor40 = 11,
         BeatFloor45 = 12,
         BeatFloor50 = 13,
+    }
+
+    public enum ShuffleFighters
+    {
+        None = 0,
+        Fighters = 1,
+        FightersAndPaws = 2,
     }
 
     public enum DeathLinkOptions

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
+using Clawrchipelago.HarmonyPatches;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 
@@ -37,9 +38,8 @@ namespace Clawrchipelago.Archipelago
 
         protected override void KillPlayerDeathLink(DeathLink deathLinkOptions)
         {
-            /*DeathMessagePatch.SetPlayerName(deathLinkOptions.Source);
-            var deathLinkPlayerKiller = new PlayerKiller(Logger, _characterActions, true);
-            deathLinkPlayerKiller.KillInSpecificWay(deathLinkOptions.Cause);*/
+            Logger.LogInfo($"Receiving Death Link from {deathLinkOptions.Source} ({deathLinkOptions.Cause})");
+            DeathlinkPatches.ReceiveDeathink();
         }
     }
 }
