@@ -34,6 +34,8 @@ namespace Clawrchipelago.HarmonyPatches
 
             InitFreshGamePatch.Initialize(logger, archipelago, locationChecker);
             RecycleUIPatches.Initialize(logger, archipelago, locationChecker);
+
+            DeathlinkPatches.Initialize(logger, archipelago, locationChecker);
         }
 
         private static void InitializeDebugPatches(ILogger logger)
