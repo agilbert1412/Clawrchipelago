@@ -3,7 +3,7 @@
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<AssemblyName>Clawrchipelago</AssemblyName>
 		<Product>Archipelago Randomizer for Dungeon Clawler</Product>
-		<Version>1.1.3</Version>
+		<Version>1.0.0</Version>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>latest</LangVersion>
 		<RestoreAdditionalProjectSources>
@@ -89,20 +89,31 @@
 	</ItemGroup>
 	<PropertyGroup Label="UserMacros">
 		<GamePath>..\..\DungeonClawler Debug\Windows\</GamePath>
-		<PluginsPath>$(GamePath)BepInEx\plugins\Clawrchipelago\</PluginsPath>
+		<PluginFolder>$(GamePath)BepInEx\plugins\Clawrchipelago</PluginFolder>
+		<PluginPath>$(PluginFolder)\</PluginPath>
+		<APWorldPath>..\..\ArchipelagoMW\worlds\</APWorldPath>
+		<ReleasesPath>$(SolutionDir)..\Clawrchipelago Releases\</ReleasesPath>
+		<ReleasesPluginPath>$(ReleasesPath)Clawrchipelago Plugin $(Version).zip</ReleasesPluginPath>
+		<ApWorldName>dungeon_clawler_$(Version)</ApWorldName>
+		<ReleasesApWorldPath>$(ReleasesPath)$(ApWorldName)</ReleasesApWorldPath>
 		<BepInExLauncher>DungeonClawler.exe</BepInExLauncher>
 	</PropertyGroup>
 	<Target Name="BeforeBuild">
   </Target>
 	<Target Name="Copy mod to debug folder" AfterTargets="Build">
-		<Message Text="Copying the mod to the plugins folder $(OutputPath)$(ProjectName).dll -&gt; $(PluginsPath)" Importance="High" />
-		<Copy SourceFiles="$(OutputPath)$(ProjectName).dll" DestinationFolder="$(PluginsPath)" ContinueOnError="false" />
-		<Copy SourceFiles="$(OutputPath)$(ProjectName).pdb" DestinationFolder="$(PluginsPath)" ContinueOnError="false" />
-		<Copy SourceFiles="$(OutputPath)Archipelago.MultiClient.Net.dll" DestinationFolder="$(PluginsPath)" ContinueOnError="false" />
-		<Copy SourceFiles="$(OutputPath)KaitoKid.ArchipelagoUtilities.Net.dll" DestinationFolder="$(PluginsPath)" ContinueOnError="false" />
-		<!--<Copy SourceFiles="$(OutputPath)Archipelago.Gifting.Net.dll" DestinationFolder="$(PluginsPath)" ContinueOnError="false" />-->
-		<Copy SourceFiles="$(OutputPath)IdTables\dungeon_clawler_item_table.json" DestinationFolder="$(PluginsPath)IdTables\" ContinueOnError="false" />
-		<Copy SourceFiles="$(OutputPath)IdTables\dungeon_clawler_location_table.json" DestinationFolder="$(PluginsPath)IdTables\" ContinueOnError="false" />
+		<Message Text="Copying the mod to the plugins folder $(OutputPath)$(ProjectName).dll -&gt; $(PluginPath)" Importance="High" />
+		<Copy SourceFiles="$(OutputPath)$(ProjectName).dll" DestinationFolder="$(PluginPath)" ContinueOnError="false" />
+		<Copy SourceFiles="$(OutputPath)$(ProjectName).pdb" DestinationFolder="$(PluginPath)" ContinueOnError="false" />
+		<Copy SourceFiles="$(OutputPath)Archipelago.MultiClient.Net.dll" DestinationFolder="$(PluginPath)" ContinueOnError="false" />
+		<Copy SourceFiles="$(OutputPath)KaitoKid.ArchipelagoUtilities.Net.dll" DestinationFolder="$(PluginPath)" ContinueOnError="false" />
+		<!--<Copy SourceFiles="$(OutputPath)Archipelago.Gifting.Net.dll" DestinationFolder="$(PluginPath)" ContinueOnError="false" />-->
+		<Copy SourceFiles="$(OutputPath)IdTables\dungeon_clawler_item_table.json" DestinationFolder="$(PluginPath)IdTables\" ContinueOnError="false" />
+		<Copy SourceFiles="$(OutputPath)IdTables\dungeon_clawler_location_table.json" DestinationFolder="$(PluginPath)IdTables\" ContinueOnError="false" />
 		<Message Text="Copied mod files" Importance="High" />
+	</Target>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(PluginFolder)' -DestinationPath '$(ReleasesPluginPath)' -Force)" />
+		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(APWorldPath)dungeon_clawler' -DestinationPath '$(ReleasesApWorldPath).zip' -Force)" />
+		<Exec Command="if $(ConfigurationName) == Release (powershell Move-Item -Path '$(ReleasesApWorldPath).zip' -Destination '$(ReleasesApWorldPath).apworld' -Force)" />
 	</Target>
 </Project>
