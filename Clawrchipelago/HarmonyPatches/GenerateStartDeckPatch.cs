@@ -33,7 +33,7 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
-                _logger.LogDebugPatchIsRunning(nameof(StartConfiguration), nameof(StartConfiguration.GenerateDeck), nameof(GenerateStartDeckPatch), nameof(Postfix));
+                // _logger.LogDebugPatchIsRunning(nameof(StartConfiguration), nameof(StartConfiguration.GenerateDeck), nameof(GenerateStartDeckPatch), nameof(Postfix));
 
                 __result.Clear();
 

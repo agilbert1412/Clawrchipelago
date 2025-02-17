@@ -14,6 +14,7 @@ using Archipelago.MultiClient.Net.Helpers;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using Clawrchipelago.Serialization;
+using Clawrchipelago.UI;
 using Gameplay;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using Newtonsoft.Json;
@@ -38,7 +39,7 @@ namespace Clawrchipelago
         private ItemManager _itemManager;
 
 
-        public TextMeshProUGUI RecentItemsLabel;
+        public RecentItemsAndLocations _recentItemsAndLocations;
 
         private void Awake()
         {
@@ -66,22 +67,25 @@ namespace Clawrchipelago
 
         public void Update()
         {
-            UpdateRecentItemsLabel();
+            _recentItemsAndLocations?.Update();
         }
 
         private void InitializeBeforeConnection()
         {
             _patcherInitializer = new PatchInitializer();
             _archipelago = new DungeonClawlerArchipelagoClient(_logger, OnItemReceived);
+            _recentItemsAndLocations = new RecentItemsAndLocations(_logger, _archipelago);
+            _itemManager = new ItemManager(_logger, _archipelago, _recentItemsAndLocations);
         }
 
         private void InitializeAfterConnection()
         {
-            _locationChecker = new LocationChecker(_logger, _archipelago, new List<string>());
+            _locationChecker = new DungeonClawlerLocationChecker(_logger, _archipelago, new List<string>(), _recentItemsAndLocations);
             _locationChecker.VerifyNewLocationChecksWithArchipelago();
             _locationChecker.SendAllLocationChecks();
             _patcherInitializer.InitializeAllPatches(_logger, _harmony, _archipelago, _locationChecker);
-            _itemManager = new ItemManager(_archipelago);
+            _recentItemsAndLocations.UpdateItems();
+            _recentItemsAndLocations.UpdateLocations();
         }
 
         private void ConnectToArchipelago()
@@ -150,34 +154,6 @@ namespace Clawrchipelago
             {
                 _logger.LogErrorException(ex);
             }
-        }
-
-        public void UpdateRecentItemsLabel()
-        {
-            if (RecentItemsLabel == null)
-            {
-                if (Game.Instance?.FloorLabel == null)
-                {
-                    return;
-                }
-
-                InstanciateRecentItemsLabel();
-            }
-
-            Logger.LogInfo($"Game.Instance.FloorLabel.text: {Game.Instance.FloorLabel.text}");
-            Logger.LogInfo($"RecentItemsLabel.text: {RecentItemsLabel.text}");
-            // Game.Instance.FloorLabel.text = "I am floor label";
-            RecentItemsLabel.text = "I am Recent Items Label";
-            Logger.LogInfo($"Game.Instance.FloorLabel.text: {Game.Instance.FloorLabel.text}");
-            Logger.LogInfo($"RecentItemsLabel.text: {RecentItemsLabel.text}");
-        }
-
-        private void InstanciateRecentItemsLabel()
-        {
-            Logger.LogInfo($"Instanciating RecentItemsLabel");
-            RecentItemsLabel = Instantiate(Game.Instance.FloorLabel, Game.Instance.FloorLabel.transform.parent, true);
-
-            // RecentItemsLabel.PixelAdjustPoint(Vector2.down);
         }
     }
 }

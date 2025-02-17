@@ -15,20 +15,27 @@ using UI;
 using Gameplay.Values;
 using System.Collections;
 using Gameplay.Liquid.Settings;
+using Clawrchipelago.UI;
+using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 
 namespace Clawrchipelago.Items
 {
     public class ItemManager
     {
+        private ILogger _logger;
         private DungeonClawlerArchipelagoClient _archipelago;
+        private RecentItemsAndLocations _recentItemsAndLocations;
 
-        public ItemManager(DungeonClawlerArchipelagoClient archipelago)
+        public ItemManager(ILogger logger, DungeonClawlerArchipelagoClient archipelago, RecentItemsAndLocations recentItemsAndLocations)
         {
+            _logger = logger;
             _archipelago = archipelago;
+            _recentItemsAndLocations = recentItemsAndLocations;
         }
 
         public void OnItemReceived()
         {
+            _recentItemsAndLocations.UpdateItems();
             if (_archipelago == null || !_archipelago.IsConnected) // || _itemManager == null)
             {
                 return;
@@ -93,6 +100,7 @@ namespace Clawrchipelago.Items
 
         public bool TryHandleReceivedTrap(ItemInfo item)
         {
+            _logger.LogInfo($"TryHandleReceivedTrap: {item.ItemName}");
             var allItems = Runtime.Configuration?.Items;
             var allLiquids = Runtime.Configuration?.Liquids;
             var clawMachine = Game.Instance?.ClawMachine;
@@ -104,6 +112,7 @@ namespace Clawrchipelago.Items
             var liquidToAdd = GetTrapLiquidToAdd(item, allLiquids);
             if (liquidToAdd != null)
             {
+                _logger.LogInfo($"Adding Liquid: {liquidToAdd.Name.ToEnglish()}");
                 Game.Instance.StartCoroutine(FillMachineWithLiquid(clawMachine, liquidToAdd));
                 return true;
             }
@@ -111,7 +120,7 @@ namespace Clawrchipelago.Items
             var itemToAdd = GetTrapItemToAdd(item, allItems);
             if (itemToAdd != null)
             {
-                var number = _archipelago.SlotData.TrapDifficulty switch
+                var amount = _archipelago.SlotData.TrapDifficulty switch
                 {
                     TrapDifficulty.NoTraps => 0,
                     TrapDifficulty.Easy => 1,
@@ -122,19 +131,22 @@ namespace Clawrchipelago.Items
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                Game.Instance.StartCoroutine(clawMachine.AddItems(itemToAdd, number));
+                _logger.LogInfo($"Adding Item: {itemToAdd.Name.ToEnglish()} ({amount})");
+
+                Game.Instance.StartCoroutine(clawMachine.AddItems(itemToAdd, amount));
                 return true;
             }
 
+            _logger.LogInfo($"Not a trap :(");
             return false;
         }
 
-        private static LiquidSetting GetTrapLiquidToAdd(ItemInfo item, LiquidSetting[] allLiquids)
+        private LiquidSetting GetTrapLiquidToAdd(ItemInfo item, LiquidSetting[] allLiquids)
         {
             foreach (var potentialLiquid in allLiquids)
             {
                 var name = potentialLiquid.Name.ToEnglish();
-                if (name == $"{item.ItemName} Trap")
+                if ($"{name} Trap" == item.ItemName)
                 {
                     return potentialLiquid;
                 }
@@ -143,12 +155,12 @@ namespace Clawrchipelago.Items
             return null;
         }
 
-        private static PickupItemSetting GetTrapItemToAdd(ItemInfo item, PickupItemSetting[] allItems)
+        private PickupItemSetting GetTrapItemToAdd(ItemInfo item, PickupItemSetting[] allItems)
         {
             foreach (var potentialItem in allItems)
             {
                 var name = potentialItem.Name.ToEnglish();
-                if (name == $"{item.ItemName} Trap")
+                if ($"{name} Trap" == item.ItemName)
                 {
                     return potentialItem;
                 }
