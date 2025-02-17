@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Clawrchipelago.HarmonyPatches;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
@@ -19,10 +20,9 @@ namespace Clawrchipelago.Archipelago
 
         public SlotData SlotData => (SlotData)_slotData;
 
-        public DungeonClawlerArchipelagoClient(ILogger logger, /*UnityActions characterActions, */Action itemReceivedFunction) : 
+        public DungeonClawlerArchipelagoClient(ILogger logger, /*UnityActions characterActions, */Action<ReceivedItemsHelper> itemReceivedFunction) : 
             base(logger, new DataPackageCache("dungeon_clawler", "BepInEx", "plugins", "Clawrchipelago", "IdTables"), itemReceivedFunction)
         {
-            //_characterActions = characterActions;
         }
 
         protected override void InitializeSlotData(string slotName, Dictionary<string, object> slotDataFields)

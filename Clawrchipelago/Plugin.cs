@@ -10,6 +10,7 @@ using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Archipelago.MultiClient.Net.Helpers;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using Clawrchipelago.Serialization;
@@ -20,6 +21,7 @@ using Gameplay.Items.Settings;
 using Platforms;
 using Gameplay.Items.Data;
 using TMPro;
+using ItemManager = Clawrchipelago.Items.ItemManager;
 
 namespace Clawrchipelago
 {
@@ -33,6 +35,7 @@ namespace Clawrchipelago
         private DungeonClawlerArchipelagoClient _archipelago;
         private ArchipelagoConnectionInfo APConnectionInfo { get; set; }
         private LocationChecker _locationChecker;
+        private ItemManager _itemManager;
 
 
         public TextMeshProUGUI RecentItemsLabel;
@@ -78,6 +81,7 @@ namespace Clawrchipelago
             _locationChecker.VerifyNewLocationChecksWithArchipelago();
             _locationChecker.SendAllLocationChecks();
             _patcherInitializer.InitializeAllPatches(_logger, _harmony, _archipelago, _locationChecker);
+            _itemManager = new ItemManager(_archipelago);
         }
 
         private void ConnectToArchipelago()
@@ -136,53 +140,11 @@ namespace Clawrchipelago
             File.WriteAllText(path, jsonObject);
         }
 
-        private void OnItemReceived()
+        private void OnItemReceived(ReceivedItemsHelper receivedItemHelper)
         {
             try
             {
-                if (_archipelago == null || !_archipelago.IsConnected) // || _itemManager == null)
-                {
-                    return;
-                }
-
-                var allReceivedItems = _archipelago.GetAllReceivedItems();
-                var configuration = Runtime.Configuration;
-                var deck = Game.Instance?.Data?.Perks;
-                if (allReceivedItems == null || configuration == null || deck == null)
-                {
-                    return;
-                }
-
-                var lastItem = allReceivedItems.LastOrDefault();
-                var allItems = configuration.Items;
-                if (lastItem == null || allItems == null)
-                {
-                    return;
-                }
-
-                var perk = allItems.FirstOrDefault(x =>
-                    x.Type == EPickupItemType.Perk && x.Rarity != EItemRarity.DontDrop &&
-                    x.Name.ToEnglish() == lastItem.ItemName);
-                if (perk == null)
-                {
-                    return;
-                }
-
-                var perksCount = Game.Instance?.Data?.Perks.CountRealPerks();
-                bool IsThisItem(PickupItemData x) => x.Setting.Name.ToEnglish().Equals(lastItem.ItemName);
-                var receivedCount = _archipelago.GetReceivedItemCount(lastItem.ItemName);
-                if (deck.Any(IsThisItem))
-                {
-                    deck.First(IsThisItem).PerkCount = receivedCount;
-                }
-                else if (perksCount != null && perksCount < RecycleUIPatches.GetMaxPerks())
-                {
-                    deck.Add(perk.GenerateData());
-                    deck.First(IsThisItem).PerkCount = receivedCount;
-                }
-
-
-                // _itemManager.ReceiveAllNewItems();
+                _itemManager.OnItemReceived();
             }
             catch (Exception ex)
             {

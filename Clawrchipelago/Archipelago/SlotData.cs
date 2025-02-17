@@ -11,6 +11,7 @@ namespace Clawrchipelago.Archipelago
         private const string SHUFFLE_ITEMS_KEY = "shuffle_combat_items";
         private const string SHUFFLE_PERKS_KEY = "shuffle_perks";
         private const string ENEMYSANITY_KEY = "enemysanity";
+        private const string TRAP_DIFFICULTY_KEY = "trap_difficulty";
         private const string DEATH_LINK_KEY = "death_link";
         private const string SEED_KEY = "seed";
         private const string MULTIWORLD_VERSION_KEY = "multiworld_version";
@@ -24,6 +25,7 @@ namespace Clawrchipelago.Archipelago
         public bool ShuffleItems { get; private set; }
         public bool ShufflePerks { get; private set; }
         public bool Enemysanity { get; private set; }
+        public TrapDifficulty TrapDifficulty { get; private set; }
         public bool DeathLink => DungeonClawlerDeathLink != DeathLinkOptions.Disabled;
         public DeathLinkOptions DungeonClawlerDeathLink { get; private set; }
         public int Seed { get; private set; }
@@ -40,6 +42,7 @@ namespace Clawrchipelago.Archipelago
             ShuffleItems = GetSlotSetting(SHUFFLE_ITEMS_KEY, true);
             ShufflePerks = GetSlotSetting(SHUFFLE_PERKS_KEY, true);
             Enemysanity = GetSlotSetting(ENEMYSANITY_KEY, true);
+            TrapDifficulty = GetSlotSetting(TRAP_DIFFICULTY_KEY, TrapDifficulty.Medium);
             DungeonClawlerDeathLink = GetSlotSetting(DEATH_LINK_KEY, DeathLinkOptions.Disabled);
             Seed = GetSlotSetting(SEED_KEY, 0);
             MultiworldVersion = GetSlotSetting(MULTIWORLD_VERSION_KEY, "");
@@ -127,6 +130,16 @@ namespace Clawrchipelago.Archipelago
         None = 0,
         Fighters = 1,
         FightersAndPaws = 2,
+    }
+
+    public enum TrapDifficulty
+    {
+        NoTraps = 0,
+        Easy = 1,
+        Medium = 2,
+        Hard = 3,
+        Hell = 4,
+        Nightmare = 5,
     }
 
     public enum DeathLinkOptions
