@@ -100,7 +100,7 @@ namespace Clawrchipelago.Items
 
         public bool TryHandleReceivedTrap(ItemInfo item)
         {
-            _logger.LogInfo($"TryHandleReceivedTrap: {item.ItemName}");
+            _logger.LogDebug($"TryHandleReceivedTrap: {item.ItemName}");
             var allItems = Runtime.Configuration?.Items;
             var allLiquids = Runtime.Configuration?.Liquids;
             var clawMachine = Game.Instance?.ClawMachine;
@@ -112,7 +112,7 @@ namespace Clawrchipelago.Items
             var liquidToAdd = GetTrapLiquidToAdd(item, allLiquids);
             if (liquidToAdd != null)
             {
-                _logger.LogInfo($"Adding Liquid: {liquidToAdd.Name.ToEnglish()}");
+                _logger.LogDebug($"Adding Liquid: {liquidToAdd.Name.ToEnglish()}");
                 Game.Instance.StartCoroutine(FillMachineWithLiquid(clawMachine, liquidToAdd));
                 return true;
             }
@@ -131,13 +131,13 @@ namespace Clawrchipelago.Items
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                _logger.LogInfo($"Adding Item: {itemToAdd.Name.ToEnglish()} ({amount})");
+                _logger.LogDebug($"Adding Item: {itemToAdd.Name.ToEnglish()} ({amount})");
 
                 Game.Instance.StartCoroutine(clawMachine.AddItems(itemToAdd, amount));
                 return true;
             }
 
-            _logger.LogInfo($"Not a trap :(");
+            _logger.LogDebug($"Not a trap :(");
             return false;
         }
 
