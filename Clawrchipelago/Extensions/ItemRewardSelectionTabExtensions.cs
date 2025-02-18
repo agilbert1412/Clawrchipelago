@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Gameplay.Items.Data;
-using UI;
 using UI.TabbedPopup;
 
 namespace Clawrchipelago.Extensions

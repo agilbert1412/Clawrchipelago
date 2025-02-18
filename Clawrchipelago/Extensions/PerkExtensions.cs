@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Gameplay.Combatants;
 using Gameplay.Items.Data;
 using Gameplay.Items.Settings;
 

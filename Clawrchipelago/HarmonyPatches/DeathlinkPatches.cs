@@ -3,13 +3,9 @@ using System;
 using System.Collections;
 using KaitoKid.ArchipelagoUtilities.Net;
 using Gameplay;
-using KaitoKid.ArchipelagoUtilities.Net.Constants;
-using Gameplay.Items.Data;
 using System.Linq;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
-using Gameplay.Combatants;
-using UnityEngine;
 using ILogger = KaitoKid.ArchipelagoUtilities.Net.Interfaces.ILogger;
 
 namespace Clawrchipelago.HarmonyPatches

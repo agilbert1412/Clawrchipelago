@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Clawrchipelago.Archipelago;
 using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using ILogger = KaitoKid.ArchipelagoUtilities.Net.Interfaces.ILogger;
 using Object = UnityEngine.Object;
 

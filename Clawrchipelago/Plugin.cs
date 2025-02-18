@@ -3,25 +3,17 @@ using Clawrchipelago.Utilities;
 using Clawrchipelago.HarmonyPatches;
 using HarmonyLib;
 using System.IO;
-using KaitoKid.ArchipelagoUtilities.Net;
 using UnityEngine;
 using ILogger = KaitoKid.ArchipelagoUtilities.Net.Interfaces.ILogger;
 using System.Threading;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Archipelago.MultiClient.Net.Helpers;
 using Clawrchipelago.Archipelago;
-using Clawrchipelago.Extensions;
 using Clawrchipelago.Serialization;
 using Clawrchipelago.UI;
-using Gameplay;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using Newtonsoft.Json;
-using Gameplay.Items.Settings;
-using Platforms;
-using Gameplay.Items.Data;
-using TMPro;
 using ItemManager = Clawrchipelago.Items.ItemManager;
 
 namespace Clawrchipelago

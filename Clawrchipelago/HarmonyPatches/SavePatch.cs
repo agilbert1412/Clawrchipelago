@@ -3,14 +3,8 @@ using System;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
-using UI;
-using Gameplay.Items.Data;
-using System.Collections.Generic;
-using System.Linq;
-using Clawrchipelago.Extensions;
 using Gameplay;
 using KaitoKid.ArchipelagoUtilities.Net.Constants;
-using Platforms;
 using Platforms.Handler;
 
 namespace Clawrchipelago.HarmonyPatches
