@@ -95,7 +95,7 @@ namespace Clawrchipelago.Items
 
         public bool TryHandleReceivedTrap(ItemInfo item)
         {
-            _logger.LogDebug($"TryHandleReceivedTrap: {item.ItemName}");
+            // _logger.LogDebug($"TryHandleReceivedTrap: {item.ItemName}");
             var allItems = Runtime.Configuration?.Items;
             var allLiquids = Runtime.Configuration?.Liquids;
             var clawMachine = Game.Instance?.ClawMachine;

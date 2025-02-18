@@ -12,7 +12,7 @@ namespace Clawrchipelago.Extensions
 
         public static bool IsEmpty(this TranslationTerm term)
         {
-            return string.IsNullOrWhiteSpace(term.Term) || term.Term == "No Text";
+            return string.IsNullOrWhiteSpace(term?.Term) || term.Term == "No Text";
         }
     }
 }

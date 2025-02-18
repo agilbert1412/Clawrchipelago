@@ -14,9 +14,13 @@ namespace Clawrchipelago.DataExport
     {
         public void ExportAll()
         {
+#if !DEBUG
+            return;
+#endif
             ExportFighters();
             ExportItems();
             ExportEnemies();
+            ExportItemEffects();
             CustomExport();
         }
 
@@ -70,6 +74,9 @@ namespace Clawrchipelago.DataExport
                 itemsByType[type][name].Add("CanDrop", item.CanDrop());
                 itemsByType[type][name].Add("CanBeCollected", item.CanBeCollected);
                 itemsByType[type][name].Add("Rarity", item.Rarity.ToString());
+                itemsByType[type][name].Add("MachineEffects", item.MachineEffects.SelectMany(x => x.Ability.Ability.Select(y => y.GetType())));
+                itemsByType[type][name].Add("RelatedStatusEffects", item.RelatedStatusEffects.SelectMany(x => x.Name.ToEnglish()));
+                itemsByType[type][name].Add("ProximityEffects", item.ProximityEffects?.Select(x => x.ItemEffect?.Effect?.Name.ToEnglish()));
             }
             var itemsAsJson = JsonConvert.SerializeObject(itemsByType, Formatting.Indented);
             File.WriteAllText("items.json", itemsAsJson);
@@ -98,6 +105,26 @@ namespace Clawrchipelago.DataExport
 
             var enemiesAsJson = JsonConvert.SerializeObject(enemiesByDifficulty, Formatting.Indented);
             File.WriteAllText("enemies.json", enemiesAsJson);
+        }
+
+        private void ExportItemEffects()
+        {
+            var effectsByName = new Dictionary<string, Dictionary<string, object>>();
+            foreach (var effect in Runtime.Configuration.ItemEffects)
+            {
+                var name = effect.Name.ToEnglish();
+                while (effectsByName.ContainsKey(name))
+                {
+                    name = $"{name}_x";
+                }
+                effectsByName.Add(name, new Dictionary<string, object>());
+                effectsByName[name].Add("Description", effect.Description.ToEnglish());
+                effectsByName[name].Add("Stackable", effect.Stackable);
+                effectsByName[name].Add("Modifications", effect.ItemModifications.Select(x => x.GetType().ToString()));
+            }
+
+            var effectsAsJson = JsonConvert.SerializeObject(effectsByName, Formatting.Indented);
+            File.WriteAllText("itemEffects.json", effectsAsJson);
         }
 
         private void CustomExport()

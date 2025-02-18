@@ -45,6 +45,16 @@ namespace Clawrchipelago.HarmonyPatches
                     }
 
                     var itemName = item.Name.ToEnglish();
+                    if (item.ProximityEffects.Any())
+                    {
+                        var proximityEffectsCount = item.ProximityEffects.Count;
+                        if (Runtime.Configuration.Items.Any(x =>
+                                x.Name.ToEnglish() == itemName && x.ProximityEffects.Count < proximityEffectsCount))
+                        {
+                            continue;
+                        }
+                    }
+
                     var receivedCount = _archipelago.GetReceivedItemCount(itemName);
 
                     if (receivedCount <= 0)
