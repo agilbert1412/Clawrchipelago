@@ -35,7 +35,7 @@ namespace Clawrchipelago
         private Harmony _harmony;
         private DungeonClawlerArchipelagoClient _archipelago;
         private ArchipelagoConnectionInfo APConnectionInfo { get; set; }
-        private LocationChecker _locationChecker;
+        private DungeonClawlerLocationChecker _locationChecker;
         private ItemManager _itemManager;
 
 
@@ -85,7 +85,7 @@ namespace Clawrchipelago
             _locationChecker.SendAllLocationChecks();
             _patcherInitializer.InitializeAllPatches(_logger, _harmony, _archipelago, _locationChecker);
             _recentItemsAndLocations.UpdateItems();
-            _recentItemsAndLocations.UpdateLocations();
+            _recentItemsAndLocations.UpdateLocations(_locationChecker.LocationsInOrder);
         }
 
         private void ConnectToArchipelago()

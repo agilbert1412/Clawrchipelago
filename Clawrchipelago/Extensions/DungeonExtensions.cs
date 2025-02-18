@@ -15,10 +15,11 @@ namespace Clawrchipelago.Extensions
             var fighter = (Fighter)(fighterField.GetValue(dungeon));
             return fighter;
         }
+
         public static List<Enemy> Enemies(this Dungeon dungeon)
         {
             // internal List<Enemy> Enemies;
-            var enemiesField = typeof(Dungeon).GetField("Fighter", BindingFlags.NonPublic | BindingFlags.Instance);
+            var enemiesField = typeof(Dungeon).GetField("Enemies", BindingFlags.NonPublic | BindingFlags.Instance);
             var enemies = (List<Enemy>)(enemiesField.GetValue(dungeon));
             return enemies;
         }

@@ -30,8 +30,6 @@ namespace Clawrchipelago.UI
             _archipelago = archipelago;
             _recentItems = [];
             _recentLocations = [];
-            UpdateItems();
-            UpdateLocations();
         }
 
         public void UpdateItems()
@@ -52,22 +50,14 @@ namespace Clawrchipelago.UI
             }
         }
 
-        public void UpdateLocations()
+        public void UpdateLocations(List<string> locationsInOrder)
         {
             if (!_archipelago.MakeSureConnected())
             {
                 return;
             }
 
-            var allLocations = _archipelago.GetSession().Locations.AllLocationsChecked;
-            if (allLocations.Count <= MAX_DISPLAYED_ENTRIES)
-            {
-                _recentLocations = allLocations.Select(_archipelago.GetLocationName).Reverse().ToList();
-            }
-            else
-            {
-                _recentLocations = allLocations.TakeLast(MAX_DISPLAYED_ENTRIES).Select(_archipelago.GetLocationName).Reverse().ToList();
-            }
+            _recentLocations = locationsInOrder.TakeLast(MAX_DISPLAYED_ENTRIES).Reverse().ToList();
         }
 
         public void Update()

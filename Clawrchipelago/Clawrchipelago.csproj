@@ -24,7 +24,7 @@
 		<PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
 		<PackageReference Include="BepInEx.Core" Version="5.*" />
 		<PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
-		<PackageReference Include="KaitoKid.ArchipelagoUtilities.Net" Version="1.1.23" />
+		<PackageReference Include="KaitoKid.ArchipelagoUtilities.Net" Version="1.1.26" />
 		<PackageReference Include="Mono.pdb2mdb" Version="0.1.0.20130128" />
 		<PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
 		<PackageReference Include="UnityEngine.Modules" Version="2020.3.26" IncludeAssets="compile" />
@@ -97,6 +97,7 @@
 		<ApWorldName>dungeon_clawler_$(Version)</ApWorldName>
 		<ReleasesApWorldPath>$(ReleasesPath)$(ApWorldName)</ReleasesApWorldPath>
 		<BepInExLauncher>DungeonClawler.exe</BepInExLauncher>
+		<UserSecretsId>46e4a67b-472f-4b96-bcbf-a135a3ff59c0</UserSecretsId>
 	</PropertyGroup>
 	<Target Name="BeforeBuild">
   </Target>
