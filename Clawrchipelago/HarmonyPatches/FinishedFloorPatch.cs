@@ -37,6 +37,13 @@ namespace Clawrchipelago.HarmonyPatches
         {
             var difficulty = Game.Instance.GetCurrentDifficulty();
             _locationChecker.AddCheckedLocation($"Complete Floor {floor} - {difficulty}");
+            if (ClawrchipelagoMod.Instance.Config.CheckLowerDifficultyLocations)
+            {
+                foreach (var lowerDifficulty in Game.Instance.GetLowerDifficulties())
+                {
+                    _locationChecker.AddCheckedLocation($"Complete Floor {floor} - {lowerDifficulty}");
+                }
+            }
 
             if (floor >= 20)
             {

@@ -49,6 +49,13 @@ namespace Clawrchipelago.HarmonyPatches
                 _logger.LogDebug($"{nameof(DungeonOnEnemyDiePatch)}: {enemyName} is dead!");
                 var difficulty = Game.Instance.GetCurrentDifficulty();
                 _locationChecker.AddCheckedLocation($"Kill {enemyName} - {difficulty}");
+                if (ClawrchipelagoMod.Instance.Config.CheckLowerDifficultyLocations)
+                {
+                    foreach (var lowerDifficulty in Game.Instance.GetLowerDifficulties())
+                    {
+                        _locationChecker.AddCheckedLocation($"Kill {enemyName} - {lowerDifficulty}");
+                    }
+                }
 
                 return;
             }
