@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
@@ -14,10 +15,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class DungeonOnEnemyDiePatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -29,6 +30,11 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
+                if (!_archipelago.SlotData.Enemysanity)
+                {
+                    return;
+                }
+
                 _logger.LogDebugPatchIsRunning(nameof(Dungeon), nameof(Dungeon.OnEnemyDied), nameof(DungeonOnEnemyDiePatch), nameof(Postfix));
 
                 var data = enemy.GetEnemyData();

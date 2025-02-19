@@ -11,6 +11,7 @@ using Platforms;
 using System.Collections.Generic;
 using System.Linq;
 using Clawrchipelago.Extensions;
+using Clawrchipelago.Archipelago;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -19,10 +20,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class GetRandomPerkRewardsPatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -34,6 +35,11 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
+                if (!_archipelago.SlotData.ShufflePerks)
+                {
+                    return MethodPrefix.RUN_ORIGINAL_METHOD;
+                }
+
                 _logger.LogDebugPatchIsRunning(nameof(Game), nameof(Game.GetRandomPerkRewards), nameof(GetRandomPerkRewardsPatch), nameof(Prefix));
 
                 rnd ??= new Random(__instance.Data.CurrentRoomSeed);

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Items.Settings;
 using Platforms;
+using Clawrchipelago.Archipelago;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -18,10 +19,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class GenerateStartDeckPatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -33,6 +34,11 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
+                if (!_archipelago.SlotData.ShuffleItems)
+                {
+                    return;
+                }
+
                 // _logger.LogDebugPatchIsRunning(nameof(StartConfiguration), nameof(StartConfiguration.GenerateDeck), nameof(GenerateStartDeckPatch), nameof(Postfix));
 
                 __result.Clear();

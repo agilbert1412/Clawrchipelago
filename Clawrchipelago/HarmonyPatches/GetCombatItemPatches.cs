@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System;
-using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 using Gameplay;
@@ -10,6 +9,7 @@ using Gameplay.Items.Settings;
 using Platforms;
 using System.Collections.Generic;
 using System.Linq;
+using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using Utils;
 
@@ -18,10 +18,10 @@ namespace Clawrchipelago.HarmonyPatches
     public static class GetCombatItemPatches
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -65,10 +65,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class GetRandomCombatItemRewardsPatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -80,6 +80,11 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
+                if (!_archipelago.SlotData.ShuffleItems)
+                {
+                    return MethodPrefix.RUN_ORIGINAL_METHOD;
+                }
+
                 _logger.LogDebugPatchIsRunning(nameof(Game), nameof(Game.GetRandomItemRewards), nameof(GetRandomCombatItemRewardPatch), nameof(Prefix));
 
                 var minimumRarity = EItemRarity.Normal;
@@ -103,10 +108,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class GetRandomCombatItemRewardPatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -118,6 +123,11 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
+                if (!_archipelago.SlotData.ShuffleItems)
+                {
+                    return MethodPrefix.RUN_ORIGINAL_METHOD;
+                }
+
                 _logger.LogDebugPatchIsRunning(nameof(Game), nameof(Game.GetRandomItemReward), nameof(GetRandomCombatItemRewardPatch), nameof(Prefix));
 
                 random ??= new Random(__instance.Data.CurrentRoomSeed);

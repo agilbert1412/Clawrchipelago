@@ -15,6 +15,7 @@ using Platforms;
 using Clawrchipelago.Extensions;
 using Gameplay.Items.Data;
 using Gameplay.Items.Settings;
+using Clawrchipelago.Archipelago;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -23,12 +24,12 @@ namespace Clawrchipelago.HarmonyPatches
     public class InitFreshGamePatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
         public static Vector2Int CombatShredderPosition;
         public static Vector2Int PerksShredderPosition;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -119,9 +120,14 @@ namespace Clawrchipelago.HarmonyPatches
                 var tilePosition = playerPosition + (Vector2Int.right * i);
                 if (i == 1)
                 {
+                    if (!_archipelago.SlotData.ShuffleItems)
+                    {
+                        continue;
+                    }
+
                     if (Game.Instance.Data.Items.Count <= RecycleUIPatches.GetMaxStartingCombatItems())
                     {
-                        PerksShredderPosition = new Vector2Int(-999, -999);
+                        CombatShredderPosition = new Vector2Int(-999, -999);
                         continue;
                     }
 
@@ -129,6 +135,11 @@ namespace Clawrchipelago.HarmonyPatches
                 }
                 else
                 {
+                    if (!_archipelago.SlotData.ShufflePerks)
+                    {
+                        continue;
+                    }
+
                     if (Game.Instance.Data.Perks.Count - 1 <= RecycleUIPatches.GetMaxPerks())
                     {
                         PerksShredderPosition = new Vector2Int(-999, -999);
@@ -146,6 +157,11 @@ namespace Clawrchipelago.HarmonyPatches
 
         private static void SetPerksDeck()
         {
+            if (!_archipelago.SlotData.ShufflePerks)
+            {
+                return;
+            }
+
             var deck = Game.Instance.Data.Perks;
             foreach (var item in Runtime.Configuration.Items)
             {

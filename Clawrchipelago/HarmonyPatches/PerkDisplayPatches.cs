@@ -7,6 +7,7 @@ using Gameplay;
 using Gameplay.Items.Data;
 using Gameplay.Items.Settings;
 using System.Linq;
+using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using UI;
 using UI.TabbedPopup;
@@ -16,10 +17,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class PerkDisplayPatches
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -47,10 +48,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class BigItemDisplayPatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -62,6 +63,11 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
+                if (!_archipelago.SlotData.ShufflePerks)
+                {
+                    return;
+                }
+
                 _logger.LogDebugPatchIsRunning(nameof(BigItemDisplay), nameof(BigItemDisplay.Init), nameof(PerkDisplayPatches), nameof(Postfix));
 
                 if (__instance == null || item == null || item.Setting == null || item.Setting.Type != EPickupItemType.Perk)
@@ -93,10 +99,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class TabbedPopupWindowAddTabPatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -108,6 +114,11 @@ namespace Clawrchipelago.HarmonyPatches
         {
             try
             {
+                if (!_archipelago.SlotData.ShufflePerks)
+                {
+                    return;
+                }
+
                 _logger.LogDebugPatchIsRunning(nameof(TabbedPopupWindow), nameof(TabbedPopupWindow.AddTab), nameof(TabbedPopupWindowAddTabPatch), nameof(Postfix));
 
                 if (__instance == null || content == null)

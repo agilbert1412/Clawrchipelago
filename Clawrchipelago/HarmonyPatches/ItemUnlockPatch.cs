@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Reflection;
+using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net;
@@ -17,10 +18,10 @@ namespace Clawrchipelago.HarmonyPatches
     public class ItemUnlockPatch
     {
         private static ILogger _logger;
-        private static ArchipelagoClient _archipelago;
+        private static DungeonClawlerArchipelagoClient _archipelago;
         private static LocationChecker _locationChecker;
 
-        public static void Initialize(ILogger logger, ArchipelagoClient archipelago, LocationChecker locationChecker)
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago, LocationChecker locationChecker)
         {
             _logger = logger;
             _archipelago = archipelago;
@@ -40,7 +41,14 @@ namespace Clawrchipelago.HarmonyPatches
                     var temporaryUnlockedField = typeof(FighterSetting).GetField("TemporaryUnlocked", BindingFlags.NonPublic | BindingFlags.Instance);
                     temporaryUnlockedField.SetValue(fighter, false);
 
-                    fighter.IsLocked = !_archipelago.HasReceivedItem(fighter.Name.ToEnglish());
+                    if (_archipelago.SlotData.ShuffleFighters == ShuffleFighters.None)
+                    {
+                        fighter.IsLocked = false;
+                    }
+                    else
+                    {
+                        fighter.IsLocked = !_archipelago.HasReceivedItem(fighter.Name.ToEnglish());
+                    }
 
                     var locked = fighter.IsLocked ? "locked" : "unlocked";
                     // _logger.LogInfo($"Fighter {fighter.Name.ToEnglish()} is currently {locked}");
