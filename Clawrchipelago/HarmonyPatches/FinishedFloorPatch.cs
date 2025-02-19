@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using Clawrchipelago.Archipelago;
@@ -12,6 +13,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Rooms;
 using Gameplay.Rooms.Data;
+using UI;
+using Gameplay.Fighters.Data;
+using KaitoKid.ArchipelagoUtilities.Net.Constants;
 
 namespace Clawrchipelago.HarmonyPatches
 {
@@ -187,13 +191,6 @@ namespace Clawrchipelago.HarmonyPatches
                     _logger.LogInfo($"Detected Finished floor {floor}");
                     _finishedFloorUtilities.FinishedFloor(floor);
                 }
-                else
-                {
-                    for (var i = 1; i < floor; i++)
-                    {
-                        _finishedFloorUtilities.FinishedFloor(i);
-                    }
-                }
 
                 return;
             }
@@ -201,6 +198,43 @@ namespace Clawrchipelago.HarmonyPatches
             {
                 _logger.LogErrorException(nameof(MapEnterRoomPatch), nameof(Postfix), ex);
                 return;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(RunEndScreen))]
+    [HarmonyPatch(nameof(RunEndScreen.ShowAndWait))]
+    public class RunEndScreenPatch
+    {
+        private static ILogger _logger;
+        private static DungeonClawlerArchipelagoClient _archipelago;
+        private static LocationChecker _locationChecker;
+        private static FinishedFloorUtilities _finishedFloorUtilities;
+
+        public static void Initialize(ILogger logger, DungeonClawlerArchipelagoClient archipelago,
+            LocationChecker locationChecker)
+        {
+            _logger = logger;
+            _archipelago = archipelago;
+            _locationChecker = locationChecker;
+            _finishedFloorUtilities = new FinishedFloorUtilities(logger, archipelago, locationChecker);
+        }
+
+        // public IEnumerator ShowAndWait(FighterData fighter)
+        public static bool Prefix(RunEndScreen __instance, FighterData fighter, ref IEnumerator __result)
+        {
+            try
+            {
+                _logger.LogDebugPatchIsRunning(nameof(RunEndScreen), nameof(RunEndScreen.ShowAndWait),
+                    nameof(RunEndScreenPatch), nameof(Prefix));
+
+                _finishedFloorUtilities.FinishedFloor(20);
+                return MethodPrefix.RUN_ORIGINAL_METHOD;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogErrorException(nameof(RunEndScreenPatch), nameof(Prefix), ex);
+                return MethodPrefix.RUN_ORIGINAL_METHOD;
             }
         }
     }

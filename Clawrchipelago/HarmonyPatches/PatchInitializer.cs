@@ -17,6 +17,7 @@ namespace Clawrchipelago.HarmonyPatches
             InitializeDebugPatches(logger);
             // SetStatFloorReachedPatch.Initialize(logger, archipelago, locationChecker);
             MapEnterRoomPatch.Initialize(logger, archipelago, locationChecker);
+            RunEndScreenPatch.Initialize(logger, archipelago, locationChecker);
             DungeonOnEnemyDiePatch.Initialize(logger, archipelago, locationChecker);
             GetRandomPerkRewardsPatch.Initialize(logger, archipelago, locationChecker);
             PerkDisplayPatches.Initialize(logger, archipelago, locationChecker);
