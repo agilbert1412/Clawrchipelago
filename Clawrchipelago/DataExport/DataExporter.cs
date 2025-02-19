@@ -63,7 +63,7 @@ namespace Clawrchipelago.DataExport
                 itemsByType[type].Add(name, new Dictionary<string, object>());
                 itemsByType[type][name].Add("Upgradable", item.CanBeUpgraded);
                 itemsByType[type][name].Add("Description", item.Description.ToString());
-                itemsByType[type][name].Add("Properties", item.Properties);
+                itemsByType[type][name].Add("Properties", item.Properties.ToString());
                 itemsByType[type][name].Add("Tags", item.Tags.Select(x => x.ToString()));
                 itemsByType[type][name].Add("Stats", item.RelatedStats.Select(x => x.ToString()));
                 itemsByType[type][name].Add("StatusEffects", item.RelatedStatusEffects.Select(x => x.ToString()));

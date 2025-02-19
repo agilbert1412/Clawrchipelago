@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Archipelago.MultiClient.Net.Helpers;
 using Clawrchipelago.Archipelago;
+using Clawrchipelago.Items;
 using Clawrchipelago.Serialization;
 using Clawrchipelago.UI;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
@@ -31,6 +32,7 @@ namespace Clawrchipelago
         private ArchipelagoConnectionInfo APConnectionInfo { get; set; }
         private DungeonClawlerLocationChecker _locationChecker;
         private ItemManager _itemManager;
+        private TrapExecutor _trapExecutor;
         public ClawrchipelagoConfig Config { get; private set; }
 
 
@@ -65,6 +67,7 @@ namespace Clawrchipelago
         public void Update()
         {
             _recentItemsAndLocations?.Update();
+            _trapExecutor?.Update();
         }
 
         private void InitializeBeforeConnection()
@@ -72,7 +75,8 @@ namespace Clawrchipelago
             _patcherInitializer = new PatchInitializer();
             _archipelago = new DungeonClawlerArchipelagoClient(_logger, OnItemReceived);
             _recentItemsAndLocations = new RecentItemsAndLocations(_logger, _archipelago);
-            _itemManager = new ItemManager(_logger, _archipelago, _recentItemsAndLocations);
+            _trapExecutor = new TrapExecutor(_logger, _archipelago);
+            _itemManager = new ItemManager(_logger, _archipelago, _trapExecutor, _recentItemsAndLocations);
         }
 
         private void InitializeAfterConnection()
