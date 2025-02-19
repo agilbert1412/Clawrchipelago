@@ -93,7 +93,10 @@
 		<PluginPath>$(PluginFolder)\</PluginPath>
 		<APWorldPath>..\..\ArchipelagoMW\worlds\</APWorldPath>
 		<ReleasesPath>$(SolutionDir)..\Clawrchipelago Releases\</ReleasesPath>
+		<ReleasesPreConfiguredPath>$(ReleasesPath)Pre-Configured BepInEx Files\</ReleasesPreConfiguredPath>
+		<ReleasesPreConfiguredPluginPath>$(ReleasesPreConfiguredPath)BepInEx\plugins\</ReleasesPreConfiguredPluginPath>
 		<ReleasesPluginPath>$(ReleasesPath)Clawrchipelago Plugin $(Version).zip</ReleasesPluginPath>
+		<ReleasesFullPath>$(ReleasesPath)Clawrchipelago Full $(Version).zip</ReleasesFullPath>
 		<ApWorldName>dungeon_clawler_$(Version)</ApWorldName>
 		<ReleasesApWorldPath>$(ReleasesPath)$(ApWorldName)</ReleasesApWorldPath>
 		<BepInExLauncher>DungeonClawler.exe</BepInExLauncher>
@@ -113,7 +116,9 @@
 		<Message Text="Copied mod files" Importance="High" />
 	</Target>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="if $(ConfigurationName) == Release (powershell Copy-Item -Path '$(PluginFolder)' -Destination '$(ReleasesPreConfiguredPluginPath)' -Recurse -Force)" />
 		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(PluginFolder)' -DestinationPath '$(ReleasesPluginPath)' -Force)" />
+		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(ReleasesPreConfiguredPath)\*' -DestinationPath '$(ReleasesFullPath)' -Force)" />
 		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(APWorldPath)dungeon_clawler' -DestinationPath '$(ReleasesApWorldPath).zip' -Force)" />
 		<Exec Command="if $(ConfigurationName) == Release (powershell Move-Item -Path '$(ReleasesApWorldPath).zip' -Destination '$(ReleasesApWorldPath).apworld' -Force)" />
 	</Target>
