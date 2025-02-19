@@ -33,9 +33,9 @@ namespace Clawrchipelago.HarmonyPatches
             RecycleButtonClickedPatch.Initialize(logger, archipelago, locationChecker);
         }
 
-        public static int GetMaxStartingCombatItems() => 2 + _archipelago.GetReceivedItemCount("Combat Inventory Size");
+        public static int GetMaxStartingCombatItems() => ClawrchipelagoMod.Instance.Config.StartingCombatInventorySize + _archipelago.GetReceivedItemCount("Combat Inventory Size");
 
-        public static int GetMaxPerks() => 2 + _archipelago.GetReceivedItemCount("Perk Inventory Size");
+        public static int GetMaxPerks() => ClawrchipelagoMod.Instance.Config.StartingPerkInventorySize + _archipelago.GetReceivedItemCount("Perk Inventory Size");
 
         public static int IsSpecialShredder()
         {

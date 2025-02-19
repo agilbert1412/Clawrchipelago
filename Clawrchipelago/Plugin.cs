@@ -21,6 +21,8 @@ namespace Clawrchipelago
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     public class ClawrchipelagoMod : BaseUnityPlugin
     {
+        public static ClawrchipelagoMod Instance { get; private set; }
+
         public string Name => "Clawrchipelago";
         private ILogger _logger;
         private PatchInitializer _patcherInitializer;
@@ -29,12 +31,14 @@ namespace Clawrchipelago
         private ArchipelagoConnectionInfo APConnectionInfo { get; set; }
         private DungeonClawlerLocationChecker _locationChecker;
         private ItemManager _itemManager;
+        public ClawrchipelagoConfig Config { get; private set; }
 
 
         public RecentItemsAndLocations _recentItemsAndLocations;
 
         private void Awake()
         {
+            Instance = this;
             try
             {
                 _logger = new LogHandler(Logger);
@@ -50,6 +54,7 @@ namespace Clawrchipelago
 
             _logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 
+            Config = ClawrchipelagoConfig.LoadConfig();
             InitializeBeforeConnection();
             ConnectToArchipelago();
             InitializeAfterConnection();
