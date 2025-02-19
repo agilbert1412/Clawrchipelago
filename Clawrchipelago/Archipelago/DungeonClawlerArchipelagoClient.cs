@@ -12,15 +12,13 @@ namespace Clawrchipelago.Archipelago
 {
     public class DungeonClawlerArchipelagoClient : ArchipelagoClient
     {
-        // private readonly UnityActions _characterActions;
-
         public override string GameName => "Dungeon Clawler";
         public override string ModName => "Clawrchipelago";
         public override string ModVersion => MyPluginInfo.PLUGIN_VERSION;
 
         public SlotData SlotData => (SlotData)_slotData;
 
-        public DungeonClawlerArchipelagoClient(ILogger logger, /*UnityActions characterActions, */Action<ReceivedItemsHelper> itemReceivedFunction) : 
+        public DungeonClawlerArchipelagoClient(ILogger logger, Action<ReceivedItemsHelper> itemReceivedFunction) : 
             base(logger, new DataPackageCache("dungeon_clawler", "BepInEx", "plugins", "Clawrchipelago", "IdTables"), itemReceivedFunction)
         {
         }
