@@ -2,14 +2,11 @@
 using Gameplay.Items.Data;
 using Gameplay;
 using Platforms;
-using System;
 using System.Linq;
 using Archipelago.MultiClient.Net.Models;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using Gameplay.Items.Settings;
-using System.Collections;
-using Gameplay.Liquid.Settings;
 using Clawrchipelago.UI;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 

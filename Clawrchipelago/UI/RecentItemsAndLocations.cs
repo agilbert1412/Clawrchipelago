@@ -3,12 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Clawrchipelago.Archipelago;
-using Clawrchipelago.Extensions;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
-using Platforms;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using ILogger = KaitoKid.ArchipelagoUtilities.Net.Interfaces.ILogger;
 using Object = UnityEngine.Object;
 

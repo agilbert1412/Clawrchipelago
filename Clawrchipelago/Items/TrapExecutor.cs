@@ -11,15 +11,8 @@ using Clawrchipelago.Extensions;
 using Gameplay.Abilities.ItemEffects;
 using UnityEngine;
 using ILogger = KaitoKid.ArchipelagoUtilities.Net.Interfaces.ILogger;
-using Gameplay.Abilities;
-using Gameplay.Combatants;
-using Gameplay.Items;
-using Gameplay.Values;
 using System.Linq;
-using Utils;
 using Random = System.Random;
-using static Gameplay.Abilities.Ability;
-using System.Reflection;
 
 namespace Clawrchipelago.Items
 {
