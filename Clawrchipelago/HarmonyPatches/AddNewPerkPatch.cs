@@ -41,6 +41,12 @@ namespace Clawrchipelago.HarmonyPatches
                 var firstMissingLocation = GetNextPerkLocationName(perk);
                 if (string.IsNullOrWhiteSpace(firstMissingLocation))
                 {
+                    if (ClawrchipelagoMod.Instance.Config.AllowStackingPerksWhenChecksAreDone &&
+                        __instance.Data.Perks.Any(x => x.Setting == perk.Setting))
+                    {
+                        return MethodPrefix.RUN_ORIGINAL_METHOD;
+                    }
+
                     return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;
                 }
 

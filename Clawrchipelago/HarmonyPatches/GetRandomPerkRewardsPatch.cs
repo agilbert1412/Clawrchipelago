@@ -49,7 +49,31 @@ namespace Clawrchipelago.HarmonyPatches
                 var missingLocations = _locationChecker.GetAllMissingLocationNames();
                 var allPerks = allItems.Where(item => item.CanDrop() && item.Type == EPickupItemType.Perk);
                 var itemsWithALocationToCheck = allPerks.Where(x =>
-                    missingLocations.Any(location => location.StartsWith($"{x.Name.ToEnglish()} - Level ")));
+                    missingLocations.Any(location => location.StartsWith($"{x.Name.ToEnglish()} - Level "))).ToList();
+
+                if (ClawrchipelagoMod.Instance.Config.AllowStackingPerksWhenChecksAreDone || itemsWithALocationToCheck.Count < 4)
+                {
+                    var perksCurrentlyEquipped = allPerks.Where(x =>
+                        __instance.Data.Perks.Any(y => x.Name.ToString().Equals(y.Setting.Name.ToString())) && 
+                        !itemsWithALocationToCheck.Contains(x)).ToList();
+                    var perksYouCanStack = perksCurrentlyEquipped.Where(x =>
+                        !x.HasStackLimit || __instance.Data.Perks.First(y => y.Setting == x).PerkCount < x.StackLimit).ToList();
+                    if (perksYouCanStack.Any())
+                    {
+                        foreach (var perk in perksYouCanStack)
+                        {
+                            itemsWithALocationToCheck.Add(perk);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var perk in perksCurrentlyEquipped)
+                        {
+                            itemsWithALocationToCheck.Add(perk);
+                        }
+                    }
+                }
+
                 var itemLocations = itemsWithALocationToCheck.ToDictionary(x => x,
                     y => missingLocations.Where(location => location.StartsWith($"{y.Name.ToEnglish()} - Level ")).ToList());
 

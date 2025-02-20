@@ -12,6 +12,7 @@ namespace Clawrchipelago.Serialization
         public bool ShowRecentItems { get; set; } = true;
         public bool ShowRecentLocations { get; set; } = false;
         public bool CheckLowerDifficultyLocations { get; set; } = false;
+        public bool AllowStackingPerksWhenChecksAreDone { get; set; } = true;
 
         public ClawrchipelagoConfig() { }
 
