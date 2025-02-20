@@ -25,7 +25,7 @@ Archipelago Randomizer Implementation for Dungeon Clawler
 
 4: This will maintain all your local configs and should cause no disruption. You are now ready to play!
 
-## C: Manual Install
+## C: Manual Install (NOT RECOMMENDED)
 
 2: Download the latest release of [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest). Pick the file that corresponds to your operating system
 
@@ -33,13 +33,15 @@ Archipelago Randomizer Implementation for Dungeon Clawler
 
 4: Launch the modded game once. This will allow BepInEx to generate critical files, like its own config and `\plugins` folder
 
-5: Download the latest file `Clawrchipelago Plugin x.x.x.zip` [The Releases Page](https://github.com/agilbert1412/Clawrchipelago/releases)
+5: Edit the BepInEx config file. Most of the settings are up to you, but you need `HideManagerGameObject = true`.
 
-6: Extract it as its own folder in `\BepInEx\plugins\`, usually naming the folder `Clawrchipelago`
+6: Download the latest file `Clawrchipelago Plugin x.x.x.zip` [The Releases Page](https://github.com/agilbert1412/Clawrchipelago/releases)
 
-7: Launch the modded game again. This will load Clawrchipelago and allow it to generate its own proper config files
+7: Extract it as its own folder in `\BepInEx\plugins\`, usually naming the folder `Clawrchipelago`
 
-8: Go to step A4
+8: Launch the modded game again. This will load Clawrchipelago and allow it to generate its own proper config files
+
+9: Go to step A4
 	
 # How to host a multiworld game
 
