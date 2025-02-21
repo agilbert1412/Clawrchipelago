@@ -57,7 +57,6 @@ namespace Clawrchipelago
             _logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 
             Config = ClawrchipelagoConfig.LoadConfig();
-            PersistentData = PersistentData.LoadData();
             InitializeBeforeConnection();
             ConnectToArchipelago();
             InitializeAfterConnection();
@@ -82,12 +81,14 @@ namespace Clawrchipelago
 
         private void InitializeAfterConnection()
         {
+            PersistentData = PersistentData.LoadData(_archipelago.SlotData.Seed);
             _locationChecker = new DungeonClawlerLocationChecker(_logger, _archipelago, new List<string>(), _recentItemsAndLocations);
             _locationChecker.VerifyNewLocationChecksWithArchipelago();
             _locationChecker.SendAllLocationChecks();
             _patcherInitializer.InitializeAllPatches(_logger, _harmony, _archipelago, _locationChecker);
             _recentItemsAndLocations.UpdateItems();
             _recentItemsAndLocations.UpdateLocations(_locationChecker.LocationsInOrder);
+            _itemManager.ReceiveAllNewItems();
         }
 
         private void ConnectToArchipelago()
@@ -148,6 +149,11 @@ namespace Clawrchipelago
 
         private void OnItemReceived(ReceivedItemsHelper receivedItemHelper)
         {
+            if (PersistentData == null)
+            {
+                return;
+            }
+
             try
             {
                 _itemManager.ReceiveAllNewItems();
