@@ -11,8 +11,9 @@ using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 using UI;
 using UI.TabbedPopup;
+using Clawrchipelago.HarmonyPatches.PerkPatches;
 
-namespace Clawrchipelago.HarmonyPatches
+namespace Clawrchipelago.HarmonyPatches.SavePatches
 {
     public class PerkDisplayPatches
     {

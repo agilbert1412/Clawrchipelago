@@ -13,7 +13,7 @@ using System.Linq;
 using Clawrchipelago.Extensions;
 using Clawrchipelago.Archipelago;
 
-namespace Clawrchipelago.HarmonyPatches
+namespace Clawrchipelago.HarmonyPatches.PerkPatches
 {
     [HarmonyPatch(typeof(Game))]
     [HarmonyPatch(nameof(Game.GetRandomPerkRewards))]
@@ -51,13 +51,21 @@ namespace Clawrchipelago.HarmonyPatches
                 var itemsWithALocationToCheck = allPerks.Where(x =>
                     missingLocations.Any(location => location.StartsWith($"{x.Name.ToEnglish()} - Level "))).ToList();
 
+                _logger.LogInfo($"rewards: {rewards}");
+                _logger.LogInfo($"allItems: {allItems}");
+                _logger.LogInfo($"missingLocations: {missingLocations}");
+                _logger.LogInfo($"allPerks: {allPerks}");
+                _logger.LogInfo($"itemsWithALocationToCheck: {itemsWithALocationToCheck}");
+
                 if (ClawrchipelagoMod.Instance.Config.AllowStackingPerksWhenChecksAreDone || itemsWithALocationToCheck.Count < 4)
                 {
                     var perksCurrentlyEquipped = allPerks.Where(x =>
-                        __instance.Data.Perks.Any(y => x.Name.ToString().Equals(y.Setting.Name.ToString())) && 
+                        __instance.Data.Perks.Any(y => x.Name.ToString().Equals(y.Setting.Name.ToString())) &&
                         !itemsWithALocationToCheck.Contains(x)).ToList();
                     var perksYouCanStack = perksCurrentlyEquipped.Where(x =>
                         !x.HasStackLimit || __instance.Data.Perks.First(y => y.Setting == x).PerkCount < x.StackLimit).ToList();
+                    _logger.LogInfo($"perksCurrentlyEquipped: {perksCurrentlyEquipped}");
+                    _logger.LogInfo($"perksYouCanStack: {perksYouCanStack}");
                     if (perksYouCanStack.Any())
                     {
                         foreach (var perk in perksYouCanStack)
@@ -72,12 +80,15 @@ namespace Clawrchipelago.HarmonyPatches
                             itemsWithALocationToCheck.Add(perk);
                         }
                     }
+                    _logger.LogInfo($"itemsWithALocationToCheck: {itemsWithALocationToCheck}");
                 }
 
                 var itemLocations = itemsWithALocationToCheck.ToDictionary(x => x,
                     y => missingLocations.Where(location => location.StartsWith($"{y.Name.ToEnglish()} - Level ")).ToList());
+                _logger.LogInfo($"itemLocations: {itemLocations}");
 
                 var itemsInOrder = itemsWithALocationToCheck.OrderByDescending(x => _archipelago.GetReceivedItemCount(x.Name.ToEnglish())).ThenByDescending(x => itemLocations[x].Count).ToList();
+                _logger.LogInfo($"itemsInOrder: {itemsInOrder}");
 
                 if (!itemsInOrder.Any())
                 {
@@ -85,7 +96,9 @@ namespace Clawrchipelago.HarmonyPatches
                     return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;
                 }
 
-                var individualChance = Math.Min(1.0, (1.0 / itemsInOrder.Count) * 1.5);
+                var individualChance = Math.Min(1.0, 1.0 / itemsInOrder.Count * 1.5);
+                _logger.LogInfo($"individualChance: {individualChance}");
+
                 for (var i = 0; i < count; i++)
                 {
                     var pickedItem = itemsInOrder.First();
@@ -106,11 +119,13 @@ namespace Clawrchipelago.HarmonyPatches
 
                     if (!itemsInOrder.Any())
                     {
+                        _logger.LogInfo($"!itemsInOrder.Any() -> rewards: {rewards}");
                         __result = rewards;
                         return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;
                     }
                 }
 
+                _logger.LogInfo($"rewards: {rewards}");
                 __result = rewards;
                 return MethodPrefix.DONT_RUN_ORIGINAL_METHOD;
             }

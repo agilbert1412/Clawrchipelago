@@ -13,7 +13,7 @@ using Gameplay;
 using UnityEngine.UI;
 using Utils;
 
-namespace Clawrchipelago.HarmonyPatches
+namespace Clawrchipelago.HarmonyPatches.SavePatches
 {
     [HarmonyPatch(typeof(SelectSaveSlotScreen))]
     [HarmonyPatch("Init")]
@@ -49,7 +49,7 @@ namespace Clawrchipelago.HarmonyPatches
         {
             // private List<SaveSlotDisplay> _saveSlots = new List<SaveSlotDisplay>();
             var saveSlotsField = typeof(SelectSaveSlotScreen).GetField("_saveSlots", BindingFlags.NonPublic | BindingFlags.Instance);
-            var saveSlots = (List<SaveSlotDisplay>)(saveSlotsField.GetValue(saveSlotScreen));
+            var saveSlots = (List<SaveSlotDisplay>)saveSlotsField.GetValue(saveSlotScreen);
 
             saveSlotScreen.SlotContainer.DestroyAllChildren();
             saveSlots = new List<SaveSlotDisplay>();
@@ -103,7 +103,7 @@ namespace Clawrchipelago.HarmonyPatches
 
             // private bool _shouldSelect;
             var shouldSelectField = typeof(SelectSaveSlotScreen).GetField("_shouldSelect", BindingFlags.NonPublic | BindingFlags.Instance);
-            var shouldSelect = (bool)(shouldSelectField.GetValue(saveSlotScreen));
+            var shouldSelect = (bool)shouldSelectField.GetValue(saveSlotScreen);
 
             if (!shouldSelect)
             {

@@ -1,5 +1,7 @@
 ﻿using Clawrchipelago.Archipelago;
 using Clawrchipelago.HarmonyPatches.DebugPatches;
+using Clawrchipelago.HarmonyPatches.PerkPatches;
+using Clawrchipelago.HarmonyPatches.SavePatches;
 using HarmonyLib;
 using KaitoKid.ArchipelagoUtilities.Net;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;

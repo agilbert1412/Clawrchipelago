@@ -7,7 +7,7 @@ using Clawrchipelago.Archipelago;
 using Platforms.Handler;
 using Platforms.Persistency;
 
-namespace Clawrchipelago.HarmonyPatches
+namespace Clawrchipelago.HarmonyPatches.SavePatches
 {
     [HarmonyPatch(typeof(PCHandler))]
     [HarmonyPatch(nameof(PCHandler.SaveProgress))]

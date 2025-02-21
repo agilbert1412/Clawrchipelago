@@ -9,7 +9,7 @@ using System.Linq;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
 
-namespace Clawrchipelago.HarmonyPatches
+namespace Clawrchipelago.HarmonyPatches.PerkPatches
 {
     [HarmonyPatch(typeof(Game))]
     [HarmonyPatch(nameof(Game.AddNewPerk))]

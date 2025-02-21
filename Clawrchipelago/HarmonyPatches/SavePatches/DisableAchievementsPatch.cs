@@ -6,7 +6,7 @@ using KaitoKid.ArchipelagoUtilities.Net.Constants;
 using Clawrchipelago.Archipelago;
 using Platforms.Achievements;
 
-namespace Clawrchipelago.HarmonyPatches
+namespace Clawrchipelago.HarmonyPatches.SavePatches
 {
     [HarmonyPatch(typeof(AchievementSystem))]
     [HarmonyPatch(nameof(AchievementSystem.UnlockAchievement))]
