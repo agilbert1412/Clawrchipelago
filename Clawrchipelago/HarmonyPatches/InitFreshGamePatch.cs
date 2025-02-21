@@ -194,7 +194,7 @@ namespace Clawrchipelago.HarmonyPatches
         {
             foreach (var currency in gameData.Currencies.Keys.ToArray())
             {
-                gameData.Currencies[currency] = _archipelago.GetReceivedItemCount("Starting Money") * 10;
+                gameData.Currencies[currency] = _archipelago.GetReceivedItemCount("Starting Money") * ClawrchipelagoMod.Instance.Config.StartingMoneyAmount;
             }
         }
     }

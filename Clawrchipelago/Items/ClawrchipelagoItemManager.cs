@@ -1,4 +1,5 @@
-﻿using Clawrchipelago.HarmonyPatches;
+﻿using System.Collections.Generic;
+using Clawrchipelago.HarmonyPatches;
 using Gameplay.Items.Data;
 using Gameplay;
 using Platforms;
@@ -6,56 +7,43 @@ using System.Linq;
 using Archipelago.MultiClient.Net.Models;
 using Clawrchipelago.Archipelago;
 using Clawrchipelago.Extensions;
+using Clawrchipelago.Serialization;
 using Gameplay.Items.Settings;
 using Clawrchipelago.UI;
+using KaitoKid.ArchipelagoUtilities.Net;
+using KaitoKid.ArchipelagoUtilities.Net.Client;
 using KaitoKid.ArchipelagoUtilities.Net.Interfaces;
 
 namespace Clawrchipelago.Items
 {
-    public class ItemManager
+    public class ClawrchipelagoItemManager : ItemManager
     {
         private ILogger _logger;
-        private DungeonClawlerArchipelagoClient _archipelago;
         private TrapExecutor _trapExecutor;
         private RecentItemsAndLocations _recentItemsAndLocations;
 
-        public ItemManager(ILogger logger, DungeonClawlerArchipelagoClient archipelago, TrapExecutor trapExecutor,
-            RecentItemsAndLocations recentItemsAndLocations)
+        public ClawrchipelagoItemManager(ILogger logger, DungeonClawlerArchipelagoClient archipelago, TrapExecutor trapExecutor,
+            IEnumerable<ReceivedItem> itemsAlreadyProcessed, RecentItemsAndLocations recentItemsAndLocations) : base(archipelago, itemsAlreadyProcessed)
         {
             _logger = logger;
-            _archipelago = archipelago;
             _trapExecutor = trapExecutor;
             _recentItemsAndLocations = recentItemsAndLocations;
         }
 
-        public void OnItemReceived()
+        protected override void ProcessItem(ReceivedItem receivedItem, bool immediatelyIfPossible)
         {
-            _recentItemsAndLocations.UpdateItems();
-            if (_archipelago == null || !_archipelago.IsConnected) // || _itemManager == null)
+            if (TryHandleReceivedPerk(receivedItem))
             {
                 return;
             }
 
-            var allReceivedItems = _archipelago.GetSession().Items.AllItemsReceived;
-            if (allReceivedItems == null)
-            {
-                return;
-            }
-
-
-            var lastItem = allReceivedItems.LastOrDefault();
-            if (TryHandleReceivedPerk(lastItem))
-            {
-                return;
-            }
-
-            if (_trapExecutor.TryHandleReceivedTrap(lastItem))
+            if (_trapExecutor.TryHandleReceivedTrap(receivedItem))
             {
                 return;
             }
         }
 
-        public bool TryHandleReceivedPerk(ItemInfo item)
+        public bool TryHandleReceivedPerk(ReceivedItem item)
         {
             if (item == null)
             {

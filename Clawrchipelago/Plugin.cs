@@ -15,7 +15,6 @@ using Clawrchipelago.Serialization;
 using Clawrchipelago.UI;
 using KaitoKid.ArchipelagoUtilities.Net.Client;
 using Newtonsoft.Json;
-using ItemManager = Clawrchipelago.Items.ItemManager;
 
 namespace Clawrchipelago
 {
@@ -31,9 +30,10 @@ namespace Clawrchipelago
         private DungeonClawlerArchipelagoClient _archipelago;
         private ArchipelagoConnectionInfo APConnectionInfo { get; set; }
         private DungeonClawlerLocationChecker _locationChecker;
-        private ItemManager _itemManager;
+        private ClawrchipelagoItemManager _itemManager;
         private TrapExecutor _trapExecutor;
         public ClawrchipelagoConfig Config { get; private set; }
+        public PersistentData PersistentData { get; private set; }
 
 
         public RecentItemsAndLocations _recentItemsAndLocations;
@@ -57,6 +57,7 @@ namespace Clawrchipelago
             _logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 
             Config = ClawrchipelagoConfig.LoadConfig();
+            PersistentData = PersistentData.LoadData();
             InitializeBeforeConnection();
             ConnectToArchipelago();
             InitializeAfterConnection();
@@ -76,7 +77,7 @@ namespace Clawrchipelago
             _archipelago = new DungeonClawlerArchipelagoClient(_logger, OnItemReceived);
             _recentItemsAndLocations = new RecentItemsAndLocations(_logger, _archipelago);
             _trapExecutor = new TrapExecutor(_logger, _archipelago);
-            _itemManager = new ItemManager(_logger, _archipelago, _trapExecutor, _recentItemsAndLocations);
+            _itemManager = new ClawrchipelagoItemManager(_logger, _archipelago, _trapExecutor, PersistentData.ItemsParsed, _recentItemsAndLocations);
         }
 
         private void InitializeAfterConnection()
@@ -149,11 +150,16 @@ namespace Clawrchipelago
         {
             try
             {
-                _itemManager.OnItemReceived();
+                _itemManager.ReceiveAllNewItems();
             }
             catch (Exception ex)
             {
                 _logger.LogErrorException(ex);
+            }
+            finally
+            {
+                PersistentData.ItemsParsed = _itemManager.GetAllItemsAlreadyProcessed();
+                PersistentData.SaveData(PersistentData, _archipelago.SlotData.Seed);
             }
         }
     }

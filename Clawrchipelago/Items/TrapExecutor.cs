@@ -13,6 +13,7 @@ using UnityEngine;
 using ILogger = KaitoKid.ArchipelagoUtilities.Net.Interfaces.ILogger;
 using System.Linq;
 using Random = System.Random;
+using KaitoKid.ArchipelagoUtilities.Net.Client;
 
 namespace Clawrchipelago.Items
 {
@@ -46,7 +47,7 @@ namespace Clawrchipelago.Items
             TryExecuteNextTrap();
         }
 
-        public bool TryHandleReceivedTrap(ItemInfo item)
+        public bool TryHandleReceivedTrap(ReceivedItem item)
         {
             if (item.ItemName.EndsWith(TRAP_SUFFIX))
             {

@@ -7,6 +7,7 @@ namespace Clawrchipelago.Serialization
     {
         private const string CONFIG_PATH = "ClawrchipelagoConfig.json";
 
+        public int StartingMoneyAmount { get; set; } = 5;
         public int StartingCombatInventorySize { get; set; } = 2;
         public int StartingPerkInventorySize { get; set; } = 1;
         public bool ShowRecentItems { get; set; } = true;
