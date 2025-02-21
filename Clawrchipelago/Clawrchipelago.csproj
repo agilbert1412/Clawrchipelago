@@ -115,7 +115,8 @@
 		<Copy SourceFiles="$(OutputPath)IdTables\dungeon_clawler_location_table.json" DestinationFolder="$(PluginPath)IdTables\" ContinueOnError="false" />
 		<Message Text="Copied mod files" Importance="High" />
 	</Target>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	<Target Name="PostBuild" AfterTargets="Copy mod to debug folder">
+		<Message Text="Copying the mod to the releases folder $(OutputPath)$(ProjectName).dll -&gt; $(PluginPath)" Importance="High" />
 		<Exec Command="if $(ConfigurationName) == Release (powershell Copy-Item -Path '$(PluginFolder)' -Destination '$(ReleasesPreConfiguredPluginPath)' -Recurse -Force)" />
 		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(PluginFolder)' -DestinationPath '$(ReleasesPluginPath)' -Force)" />
 		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(ReleasesPreConfiguredPath)\*' -DestinationPath '$(ReleasesFullPath)' -Force)" />
