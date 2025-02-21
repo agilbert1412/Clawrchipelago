@@ -13,7 +13,7 @@ namespace Clawrchipelago.Serialization
         public bool ShowRecentItems { get; set; } = true;
         public bool ShowRecentLocations { get; set; } = false;
         public bool CheckLowerDifficultyLocations { get; set; } = false;
-        public bool AllowStackingPerksWhenChecksAreDone { get; set; } = true;
+        public bool AllowStackingPerksWhenChecksAreDone { get; set; } = false;
 
         public ClawrchipelagoConfig() { }
 
@@ -34,6 +34,7 @@ namespace Clawrchipelago.Serialization
 
             var jsonObject = File.ReadAllText(CONFIG_PATH);
             var config = JsonConvert.DeserializeObject<ClawrchipelagoConfig>(jsonObject);
+            SaveConfig(config);
             return config;
         }
     }

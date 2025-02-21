@@ -76,12 +76,12 @@ namespace Clawrchipelago
             _archipelago = new DungeonClawlerArchipelagoClient(_logger, OnItemReceived);
             _recentItemsAndLocations = new RecentItemsAndLocations(_logger, _archipelago);
             _trapExecutor = new TrapExecutor(_logger, _archipelago);
-            _itemManager = new ClawrchipelagoItemManager(_logger, _archipelago, _trapExecutor, PersistentData.ItemsParsed, _recentItemsAndLocations);
         }
 
         private void InitializeAfterConnection()
         {
-            PersistentData = PersistentData.LoadData(_archipelago.SlotData.Seed);
+            PersistentData = PersistentData.LoadData(_archipelago.SlotData);
+            _itemManager = new ClawrchipelagoItemManager(_logger, _archipelago, _trapExecutor, PersistentData.ItemsParsed, _recentItemsAndLocations);
             _locationChecker = new DungeonClawlerLocationChecker(_logger, _archipelago, new List<string>(), _recentItemsAndLocations);
             _locationChecker.VerifyNewLocationChecksWithArchipelago();
             _locationChecker.SendAllLocationChecks();
@@ -89,6 +89,7 @@ namespace Clawrchipelago
             _recentItemsAndLocations.UpdateItems();
             _recentItemsAndLocations.UpdateLocations(_locationChecker.LocationsInOrder);
             _itemManager.ReceiveAllNewItems();
+            SavePersistentData();
         }
 
         private void ConnectToArchipelago()
@@ -149,7 +150,7 @@ namespace Clawrchipelago
 
         private void OnItemReceived(ReceivedItemsHelper receivedItemHelper)
         {
-            if (PersistentData == null)
+            if (_itemManager == null || PersistentData == null)
             {
                 return;
             }
@@ -164,9 +165,14 @@ namespace Clawrchipelago
             }
             finally
             {
-                PersistentData.ItemsParsed = _itemManager.GetAllItemsAlreadyProcessed();
-                PersistentData.SaveData(PersistentData, _archipelago.SlotData.Seed);
+                SavePersistentData();
             }
+        }
+
+        private void SavePersistentData()
+        {
+            PersistentData.ItemsParsed = _itemManager.GetAllItemsAlreadyProcessed();
+            PersistentData.SaveData(PersistentData, _archipelago.SlotData);
         }
     }
 }
