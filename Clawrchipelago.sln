@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawrchipelago", "Clawrchipelago\Clawrchipelago.csproj", "{9C8E4EAE-672E-4DD0-9256-2ED1961F4998}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataExporter", "DataExporter\DataExporter.csproj", "{1D538140-FFC1-42A8-98BE-BE863C6CF781}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +17,12 @@ Global
 		{9C8E4EAE-672E-4DD0-9256-2ED1961F4998}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C8E4EAE-672E-4DD0-9256-2ED1961F4998}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C8E4EAE-672E-4DD0-9256-2ED1961F4998}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D538140-FFC1-42A8-98BE-BE863C6CF781}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D538140-FFC1-42A8-98BE-BE863C6CF781}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D538140-FFC1-42A8-98BE-BE863C6CF781}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D538140-FFC1-42A8-98BE-BE863C6CF781}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

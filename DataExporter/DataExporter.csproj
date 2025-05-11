@@ -1,0 +1,106 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<AssemblyName>DataExporter</AssemblyName>
+		<Product>Data Exporter for Dungeon Clawler</Product>
+		<Version>1.0.0</Version>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<LangVersion>latest</LangVersion>
+		<RestoreAdditionalProjectSources>
+			https://api.nuget.org/v3/index.json;
+			https://nuget.bepinex.dev/v3/index.json;
+			https://nuget.samboy.dev/v3/index.json
+		</RestoreAdditionalProjectSources>
+		<RootNamespace>DataExporter</RootNamespace>
+		<DebugType>Full</DebugType>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Archipelago.MultiClient.Net" Version="6.6.0" />
+		<PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+		<PackageReference Include="BepInEx.Core" Version="5.*" />
+		<PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+		<PackageReference Include="Mono.pdb2mdb" Version="0.1.0.20130128" />
+		<PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
+		<PackageReference Include="UnityEngine.Modules" Version="2020.3.26" IncludeAssets="compile" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="AllIn1SpriteShaderAssembly">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\AllIn1SpriteShaderAssembly.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp-firstpass">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+		</Reference>
+		<Reference Include="com.rlabrecque.steamworks.net">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
+		</Reference>
+		<Reference Include="CW.Common">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\CW.Common.dll</HintPath>
+		</Reference>
+		<Reference Include="DOTween">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\DOTween.dll</HintPath>
+		</Reference>
+		<Reference Include="HarmonyXInterop">
+			<HintPath>..\..\DungeonClawler Debug\Windows\BepInEx\core\HarmonyXInterop.dll</HintPath>
+		</Reference>
+		<Reference Include="Rewired_Core">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Rewired_Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Rewired_Windows">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Rewired_Windows.dll</HintPath>
+		</Reference>
+		<Reference Include="Sirenix.Serialization">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Sirenix.Serialization.dll</HintPath>
+		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.InputModule">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>..\..\DungeonClawler Debug\Windows\DungeonClawler_Data\Managed\UnityEngine.UI.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="DataExport\" />
+		<Folder Include="Properties\" />
+	</ItemGroup>
+	<PropertyGroup Label="UserMacros">
+		<GamePath>..\..\DungeonClawler Debug\Windows\</GamePath>
+		<PluginFolder>$(GamePath)BepInEx\plugins\DataExporter</PluginFolder>
+		<PluginPath>$(PluginFolder)\</PluginPath>
+		<ReleasesPath>$(SolutionDir)..\Clawrchipelago Releases\</ReleasesPath>
+		<ReleasesPreConfiguredPath>$(ReleasesPath)Pre-Configured BepInEx Files\</ReleasesPreConfiguredPath>
+		<ReleasesPreConfiguredPluginPath>$(ReleasesPreConfiguredPath)BepInEx\plugins\</ReleasesPreConfiguredPluginPath>
+		<ReleasesPluginPath>$(ReleasesPath)DataExporter Plugin $(Version).zip</ReleasesPluginPath>
+		<ReleasesFullPath>$(ReleasesPath)DataExporter Full $(Version).zip</ReleasesFullPath>
+		<BepInExLauncher>DungeonClawler.exe</BepInExLauncher>
+		<UserSecretsId>46e4a67b-472f-4b96-bcbf-a135a3ff59c0</UserSecretsId>
+	</PropertyGroup>
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="Copy mod to debug folder" AfterTargets="Build">
+		<Message Text="Copying the mod to the plugins folder $(OutputPath)$(ProjectName).dll -&gt; $(PluginPath)" Importance="High" />
+		<Copy SourceFiles="$(OutputPath)$(ProjectName).dll" DestinationFolder="$(PluginPath)" ContinueOnError="false" />
+		<Copy SourceFiles="$(OutputPath)$(ProjectName).pdb" DestinationFolder="$(PluginPath)" ContinueOnError="false" />
+		<Message Text="Copied mod files" Importance="High" />
+	</Target>
+	<Target Name="PostBuild" AfterTargets="Copy mod to debug folder">
+		<Message Text="Copying the mod to the releases folder $(OutputPath)$(ProjectName).dll -&gt; $(PluginPath)" Importance="High" />
+		<Exec Command="if $(ConfigurationName) == Release (powershell Copy-Item -Path '$(PluginFolder)' -Destination '$(ReleasesPreConfiguredPluginPath)' -Recurse -Force)" />
+		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(PluginFolder)' -DestinationPath '$(ReleasesPluginPath)' -Force)" />
+		<Exec Command="if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(ReleasesPreConfiguredPath)\*' -DestinationPath '$(ReleasesFullPath)' -Force)" />
+	</Target>
+</Project>
